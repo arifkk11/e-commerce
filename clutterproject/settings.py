@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,15 +128,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
+
 STATIC_URL = '/static/'
 
-# For development (optional, if you want to keep static outside apps too)
-STATICFILES_DIRS = [
-    BASE_DIR / "static",   # if you also have a global /static/ folder
-]
-
-# For production
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# For development (optional, if you want to keep static outside apps too)
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -210,3 +208,5 @@ CSRF_TRUSTED_ORIGINS = [
     'https://web-production-27120.up.railway.app'
 ]
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
