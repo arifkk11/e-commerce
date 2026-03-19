@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell Fashion With Orgin | Sustainable Clothing Marketplace</title>
+    <style>
+        :root {
+            --primary-light: #D5F9E9;
+            --primary-medium: #7CC9A4;
+            --primary-dark: #2E7D5F;
+            --accent-color: #FFA000;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            background-color: #f8f8f8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .sell-header {
+            background-color: white;
+            padding: 60px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
+                            url('https://images.unsplash.com/photo-1483985988355-763728e1935b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center 30%;
+        }
+        
+        .sell-header h1 {
+            color: var(--primary-dark);
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+        }
+        
+        .sell-header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+        
+        /* Button Styles */
+        .fill-btn-r, .fill-btn-l {
+            display: inline-block;
+            padding: 15px 35px;
+            margin: 0 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1.1rem;
+        }
+        
+        .fill-btn-r {
+            background-color: var(--primary-medium);
+            color: white;
+            border: 2px solid var(--primary-medium);
+        }
+        
+        .fill-btn-l {
+            background-color: white;
+            color: var(--primary-medium);
+            border: 2px solid var(--primary-medium);
+        }
+        
+        .fill-btn-r:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .fill-btn-l:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Benefits Section */
+        .benefits-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+        
+        .benefit-card {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            transition: transform 0.4s;
+            border-top: 4px solid var(--primary-medium);
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .benefit-icon {
+            font-size: 2.5rem;
+            color: var(--primary-medium);
+            margin-bottom: 25px;
+        }
+        
+        .benefit-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            background-color: var(--primary-light);
+            padding: 60px;
+            border-radius: 15px;
+            margin-bottom: 60px;
+        }
+        
+        .section-title {
+            text-align: center;
+            color: var(--primary-dark);
+            font-size: 2.2rem;
+            margin-bottom: 50px;
+        }
+        
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            position: relative;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 0 25px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-medium);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 auto 25px;
+        }
+        
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-medium);
+            z-index: 0;
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 50px 0;
+        }
+        
+        .testimonial {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .testimonial-quote {
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .testimonial-author {
+            font-weight: bold;
+            color: var(--primary-dark);
+        }
+        
+        /* Seller CTA Section */
+        .seller-cta {
+            text-align: center;
+            padding: 80px 0;
+        }
+        
+        .seller-cta h2 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .seller-cta p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+        
+        .seller-perks {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .perk-tag {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--primary-light);
+        }
+        
+        @media (max-width: 768px) {
+            .benefits-section, .testimonials {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps-container {
+                flex-direction: column;
+            }
+            
+            .steps-container::before {
+                display: none;
+            }
+            
+            .step {
+                margin-bottom: 40px;
+            }
+            
+            .sell-header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .fill-btn-r, .fill-btn-l {
+                display: block;
+                margin: 15px auto;
+                max-width: 250px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <section class="sell-header">
+        <div class="container">
+            <h1>Sell Your Fashion With Orgin</h1>
+            <p>Join our sustainable fashion marketplace where independent designers thrive. List your collection and reach conscious consumers who value quality and ethical production.</p>
+           
+            {% if user.buyer_profile and user.buyer_profile.is_complete %}
+                <a href="#" class="fill-btn-r" disabled>The User have already Buyer</a>
+            {% else %}
+                <a href="{% url 'seller_register' %}" class="fill-btn-r">START SELLING</a>
+            {% endif %}
+
+
+            {% comment %} {% if user.is_authenticated %}
+                {% if user.user_type == 'seller' %}
+                    <a href="{% url 'seller_register' %}" class="fill-btn-r">START SELLING</a> 
+                    {% elif %}               
+                {% else %}
+                    <a href="{% url 'declutter_page' %}" class="fill-btn-r">START DECLUTTING NOW</a>
+                {% endif %}
+            {% else %}
+                    <a href="{% url 'login' %}" class="fill-btn-r">START DECLUTTING NOW</a>
+
+            {% endif %} {% endcomment %}
+
+
+            {% comment %} <a href="{% url 'login' %}" class="fill-btn-l"> LOGIN</a> {% endcomment %}
+        </div>
+    </section>
+    
+    <div class="container">
+        <!-- Benefits Section -->
+        <section class="benefits-section">
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="fas fa-tshirt"></i></div>
+                <h3>Fashion-First Platform</h3>
+                <p>Built specifically for clothing brands with features like size charts, lookbooks, and collection management.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="fas fa-users"></i></div>
+                <h3>Targeted Audience</h3>
+                <p>Reach thousands of fashion-conscious buyers actively seeking sustainable clothing.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="fas fa-truck"></i></div>
+                <h3>Logistics Support</h3>
+                <p>Integrated shipping solutions and hassle-free returns management.</p>
+            </div>
+        </section>
+        
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <h2 class="section-title">Start Selling in 3 Steps</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Account Setup</h3>
+                    <p>Create your designer profile with basic information and verify your identity.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Store Details</h3>
+                    <p>Set up your brand story, policies, and upload your first 5+ items.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Approved</h3>
+                    <p>Our fashion team reviews your submission within 1-2 business days.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <div class="testimonial">
+                <p class="testimonial-quote">"Since joining Orgin, my sustainable activewear line has grown 300% in sales. The platform attracts exactly the right customers for my brand."</p>
+                <p class="testimonial-author">— Elena R., Founder of GreenMove Active</p>
+            </div>
+            
+            <div class="testimonial">
+                <p class="testimonial-quote">"The seller tools make managing my vintage clothing store effortless. I love being part of a marketplace that aligns with my values."</p>
+                <p class="testimonial-author">— Jamal T., Retro Revival Curator</p>
+            </div>
+        </section>
+        
+        <!-- Seller CTA Section -->
+        <section class="seller-cta" id="seller-cta">
+            <h2>Ready to Grow Your Fashion Brand?</h2>
+            <p>Join hundreds of designers building successful businesses on Orgin</p>
+            {% if user.buyer_profile and user.buyer_profile.is_complete %}
+            <p style="color:red; font-size:14px;">* You’ve already created a Buyer Account <br>Create another account or Clear the Buyer profile</p>
+
+                <a href="{% url 'buyerprofile' %}" class="fill-btn-r">Choose another account*</a>
+
+            {% else %}
+                <a href="{% url 'seller_register' %}" class="fill-btn-r">APPLY TO SELL</a>
+            {% endif %}
+            <a href="#" class="fill-btn-l">SEE SELLER TERMS</a>
+            
+            <div class="seller-perks">
+                <div class="perk-tag">No monthly fees</div>
+                <div class="perk-tag">4156</div>
+                <div class="perk-tag">Fast payouts</div>
+                <div class="perk-tag">Marketing support</div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

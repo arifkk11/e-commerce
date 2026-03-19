@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>OTP Login</title>
+<style>
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;
+           display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .login-container { background-color: white; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                      padding: 30px; width: 350px; text-align: center; }
+    h1 { color: #333; margin-bottom: 25px; font-size: 24px; }
+    .input-group { margin-bottom: 20px; text-align: left; }
+    label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+    input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+    button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 16px; font-weight: 500;
+             cursor: pointer; transition: background-color 0.3s; margin-bottom: 10px; }
+    .send-btn { background-color: #4285f4; color: white; }
+    .send-btn:hover { background-color: #3367d6; }
+    .verify-btn { background-color: #34a853; color: white; }
+    .verify-btn:hover { background-color: #2d8e47; }
+    .resend-btn { background-color: #fbbc05; color: white; }
+    .resend-btn[disabled] { background-color: #ccc; cursor: not-allowed; }
+    .google-btn { background-color: #fff; border: 1px solid #ddd; display: flex; align-items:center; justify-content:center;
+                  gap: 10px; font-size: 15px; }
+    .google-btn img { width: 18px; height: 18px; }
+    .messages { margin-bottom: 15px; min-height: 1.2em; }
+    .messages .error { color: red; }
+    .messages .success { color: green; }
+    .countdown { margin-top: 10px; color: #555; font-size: 14px; }
+</style>
+</head>
+<body>
+<div class="login-container">
+    <h1>Welcome Back</h1>
+
+    <!-- Flash messages -->
+    <div class="messages" id="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <p class="{{ message.tags }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Send OTP Form -->
+    <form method="post" action="/send-otp/" id="sendOtpForm">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="email">Email Address</label>
+            <input type="email" name="email" id="email" placeholder="Enter your email" required>
+        </div>
+        <button type="submit" class="send-btn" id="sendBtn">Send OTP</button>
+    </form>
+
+    <!-- Verify OTP Form (hidden initially) -->
+    <form method="post" action="/verify-otp/" id="verifyOtpForm" style="display:none;">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="otp">OTP</label>
+            <input type="text" name="otp" id="otp" placeholder="Enter 6-digit OTP" maxlength="6" required>
+        </div>
+        <button type="submit" class="verify-btn">Verify OTP</button>
+
+        <div class="countdown" id="countdownText"></div>
+        <button type="button" class="resend-btn" id="resendBtn" disabled>Resend OTP</button>
+    </form>
+
+    <!-- Google Signup always visible -->
+    <a href="{% url 'google_start' %}?role=buyer" style="text-decoration:none;">
+        <button type="button" class="google-btn">
+            <img src="https://www.google.com/favicon.ico" alt="Google logo" />
+            Sign up with Google
+        </button>
+    </a>
+</div>
+
+<script>
+(function(){
+  const sendOtpForm = document.getElementById('sendOtpForm');
+  const verifyOtpForm = document.getElementById('verifyOtpForm');
+  const countdownText = document.getElementById('countdownText');
+  const resendBtn = document.getElementById('resendBtn');
+  const messagesDiv = document.getElementById('messages');
+  const sendBtn = document.getElementById('sendBtn');
+
+  let timer = null;
+  let countdown = 60;
+
+  function showMessage(type, text) {
+    messagesDiv.innerHTML = '<p class="' + (type === 'error' ? 'error' : 'success') + '">' + text + '</p>';
+  }
+
+  function clearMessage() { messagesDiv.innerHTML = ''; }
+
+  function startCountdown() {
+    // clear any previous timer
+    if (timer) { clearInterval(timer); timer = null; }
+    resendBtn.disabled = true;
+    countdown = 60;
+    countdownText.textContent = `You can resend OTP in ${countdown}s`;
+
+    timer = setInterval(() => {
+      countdown--;
+      if (countdown > 0) {
+        countdownText.textContent = `You can resend OTP in ${countdown}s`;
+      } else {
+        clearInterval(timer);
+        timer = null;
+        countdownText.textContent = 'You can now resend OTP';
+        resendBtn.disabled = false;
+      }
+    }, 1000);
+  }
+
+  function getCsrfTokenFromForm(form) {
+    const el = form.querySelector('input[name="csrfmiddlewaretoken"]');
+    return el ? el.value : null;
+  }
+
+  // Submit send-otp via AJAX and then show verify area + start countdown
+  sendOtpForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    clearMessage();
+
+    // disable send button while sending
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Sending...';
+
+    const formData = new FormData(sendOtpForm);
+    const csrfToken = getCsrfTokenFromForm(sendOtpForm);
+
+    fetch(sendOtpForm.action, {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin',
+      headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {}
+    })
+    .then(response => {
+      // treat response.ok as success; try parse json if available for friendly message
+      if (!response.ok) {
+        return response.text().then(txt => { throw new Error(txt || 'Server error'); });
+      }
+      const ct = response.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return response.json();
+      return response.text();
+    })
+    .then(data => {
+      // success path
+      // if server returned JSON with message, show it; otherwise show generic success
+      if (typeof data === 'object' && data !== null && data.message) {
+        showMessage('success', data.message);
+      } else {
+        showMessage('success', 'OTP has been sent to your email.');
+      }
+
+      // hide send form and show verify form
+      sendOtpForm.style.display = 'none';
+      verifyOtpForm.style.display = 'block';
+
+      // ensure resend is disabled and start countdown
+      resendBtn.disabled = true;
+      startCountdown();
+    })
+    .catch(err => {
+      // show error returned by server or network failure
+      let msg = 'Failed to send OTP.';
+      if (err && err.message) msg += ' ' + (err.message.replace(/<[^>]*>?/gm, '').slice(0,200));
+      showMessage('error', msg);
+    })
+    .finally(() => {
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send OTP';
+    });
+  });
+
+  // Resend button: send the same email again via AJAX (pull email value)
+  resendBtn.addEventListener('click', function() {
+    clearMessage();
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Resending...';
+
+    // Build a minimal FormData with email + csrf token
+    const emailVal = document.getElementById('email').value || '';
+    const formData = new FormData();
+    formData.append('email', emailVal);
+
+    // fetch CSRF token from original send form (hidden inputs are still in DOM)
+    const csrfToken = getCsrfTokenFromForm(sendOtpForm);
+    if (csrfToken) formData.append('csrfmiddlewaretoken', csrfToken);
+
+    fetch(sendOtpForm.action, {
+      method: 'POST',
+      body: formData,
+      credentials: 'same-origin',
+      headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {}
+    })
+    .then(response => {
+      if (!response.ok) {
+        return response.text().then(txt => { throw new Error(txt || 'Server error'); });
+      }
+      const ct = response.headers.get('content-type') || '';
+      if (ct.includes('application/json')) return response.json();
+      return response.text();
+    })
+    .then(data => {
+      if (typeof data === 'object' && data !== null && data.message) {
+        showMessage('success', data.message);
+      } else {
+        showMessage('success', 'OTP resent to your email.');
+      }
+      startCountdown();
+    })
+    .catch(err => {
+      let msg = 'Failed to resend OTP.';
+      if (err && err.message) msg += ' ' + (err.message.replace(/<[^>]*>?/gm, '').slice(0,200));
+      showMessage('error', msg);
+      // re-enable resend on error
+      resendBtn.disabled = false;
+    })
+    .finally(() => {
+      resendBtn.textContent = 'Resend OTP';
+    });
+  });
+
+  // Optionally: If user refreshes page and server delivered verify area already visible:
+  // you could check a server-rendered flag to start the countdown automatically.
+})();
+</script>
+</body>
+</html>

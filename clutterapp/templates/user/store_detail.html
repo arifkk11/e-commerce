@@ -1,0 +1,153 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #D5F9E9;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h2, h3 {
+        color: #2E4A3E;
+        margin-bottom: 10px;
+    }
+
+    .seller-info {
+        background: #7CC9A4;
+        padding: 20px;
+        border-radius: 12px;
+        color: white;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+
+    .seller-info p {
+        margin: 5px 0;
+        line-height: 1.5;
+    }
+
+    hr {
+        border: none;
+        border-top: 2px solid #7CC9A4;
+        margin: 20px 0;
+    }
+
+    .product-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .product-card {
+        background: white;
+        border: 2px solid #7CC9A4;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .product-card img {
+        width: 100%;
+        max-width: 180px;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+
+    .product-card h4 {
+        margin: 10px 0 5px;
+        font-size: 1.1rem;
+        color: #2E4A3E;
+    }
+
+    .product-card p {
+        font-weight: bold;
+        color: #7CC9A4;
+        font-size: 1rem;
+    }
+
+    .product-card a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    /* ✅ Responsive Styles */
+    @media (max-width: 1024px) { /* Tablets */
+        body {
+            padding: 15px;
+        }
+        .product-list {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
+        }
+    }
+
+    @media (max-width: 768px) { /* Large Phones */
+        h2, h3 {
+            font-size: 1.3rem;
+        }
+        .seller-info {
+            padding: 15px;
+            font-size: 0.95rem;
+        }
+        .product-list {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+    }
+
+    @media (max-width: 480px) { /* Small Phones */
+        body {
+            padding: 10px;
+        }
+        h2, h3 {
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        .seller-info {
+            text-align: center;
+        }
+        .product-list {
+            grid-template-columns: 1fr; /* Single column */
+        }
+        .product-card {
+            padding: 12px;
+        }
+    }
+</style>
+
+<div class="seller-info">
+    <h2>{{ seller.store_name }}</h2>
+    <p><strong>Phone:</strong> {{ seller.phone }}</p>
+    <p><strong>Address:</strong> 
+        {{ seller.address.post_office }}, 
+        {{ seller.address.city }}, 
+        {{ seller.address.state }}, 
+        {{ seller.address.country }}
+    </p>
+    <p><strong>More Info:</strong> {{ seller.address.extra_details }}</p>
+</div>
+
+<hr>
+
+<h3>Products by {{ seller.store_name }}</h3>
+
+<div class="product-list">
+    {% for product in products %}
+        <div class="product-card">
+            <a href="{% url 'product_details' product.id %}">
+                <img src="{{ product.get_first_image_url }}" alt="{{ product.name }}">
+                <h4>{{ product.name }}</h4>
+                <p>${{ product.price }}</p>
+            </a>
+        </div>
+    {% empty %}
+        <p>No products available from this seller yet.</p>
+    {% endfor %}
+</div>

@@ -1,0 +1,452 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Clutter & Co</title>
+    <!-- CSS here -->
+   {% comment %} <link rel="stylesheet" href="{% static "css/preloader.css" %}"> {% endcomment %}
+   <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+   <link rel="stylesheet" href="{% static "css/meanmenu.css" %}">
+   <link rel="stylesheet" href="{% static "css/animate.min.css" %}">
+   <link rel="stylesheet" href="{% static "css/owl.carousel.min.css" %}">
+   <link rel="stylesheet" href="{% static "css/swiper-bundle.css" %}">
+   <link rel="stylesheet" href="{% static "css/backToTop.css" %}">
+   <link rel="stylesheet" href="{% static "css/magnific-popup.css" %}">
+   <link rel="stylesheet" href="{% static "css/ui-range-slider.css" %}">
+   <link rel="stylesheet" href="{% static "css/nice-select.css" %}">
+   <link rel="stylesheet" href="{% static "css/fontAwesome5Pro.css" %}">
+   <link rel="stylesheet" href="{% static "css/flaticon.css" %}">
+   <link rel="stylesheet" href="{% static "css/default.css" %}">
+   <link rel="stylesheet" href="{% static "css/style.css" %}">
+   <!-- Fancybox CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #000000;
+            --secondary: #f8f8f8;
+            --accent: #4CAF50;
+            --text: #333333;
+            --light-text: #777777;
+            --border: #e0e0e0;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        body {
+            background-color: white;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+        
+        .cart-icon {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text);
+            text-decoration: none;
+        }
+        
+        /* Signup Section */
+        .signup-section {
+            display: flex;
+            min-height: calc(100vh - 82px);
+            align-items: center;
+            padding: 60px 0;
+        }
+        
+        .signup-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .signup-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .signup-header p {
+            color: var(--light-text);
+        }
+        
+        .signup-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .signup-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .signup-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        .signup-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .terms input {
+            margin-top: 3px;
+        }
+        
+        .terms label {
+            font-size: 14px;
+            color: var(--light-text);
+        }
+        
+        .terms a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .terms a:hover {
+            text-decoration: underline;
+        }
+        
+        .signup-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        .signup-btn:hover {
+            background-color: #333;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: var(--light-text);
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        .google-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .google-btn:hover {
+            background-color: var(--secondary);
+        }
+        
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--light-text);
+        }
+        
+        .login-link a {
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: none;
+        }
+        
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Footer */
+        .footer-message {
+            text-align: center;
+            padding: 30px 0;
+            background-color: var(--secondary);
+            margin-top: 60px;
+        }
+        
+        .footer-message p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .footer-message strong {
+            color: var(--primary);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .action-btn:hover {
+            background-color: #333;
+        }
+        
+        /* Clutter Coins Bonus */
+        .coins-bonus {
+            background-color: var(--secondary);
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .coins-bonus p {
+            font-size: 14px;
+            color: var(--text);
+        }
+    </style>
+</head>
+<body>
+   
+
+    <section class="signup-section">
+        <div class="container">
+            <div class="signup-container">
+                <div class="signup-header">
+                    <h1>Create Your Account</h1>
+                    <p>Join Clutter & Co to start shopping and earning rewards</p>
+                </div>
+                
+                <div class="coins-bonus">
+                    <p>🎉 Get 100 Clutter Coins when you sign up today!</p>
+                </div>
+                
+                <form class="signup-form" method="POST" >
+                     {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="your@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password1">Password</label>
+                        <input type="password" id="password1" name="password1" required placeholder="••••••••">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password2">Confirm Password</label>
+                        <input type="password" id="password2" name="password2" required placeholder="••••••••">
+                    </div>
+                    
+                    <div class="terms">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms">I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a></label>
+                    </div>
+                    
+                    <button type="submit" class="signup-btn">Create Account</button>
+                    
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+                    
+                    
+                    
+                    <div class="login-link">
+                        Already have an account? <a href={% url 'userlogin' %}>Log in</a>
+                    </div>
+                </form>
+                  <a href="{% url 'google_start' %}?role=buyer"  style="text-decoration:none;">
+
+                     <button class="google-btn">
+                        <img src="https://www.google.com/favicon.ico" alt="Google logo">
+                        Sign up with Google
+                     </button>
+                  </a>
+
+            </div>
+        </div>
+    </section>
+     {% if messages %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            Swal.fire({
+                title: '{{ message|escapejs }}',
+                icon: 'error',
+                background: '#FFE6E6',  // Light red background
+                confirmButtonColor: '#FF6B6B',  // Red button
+                customClass: {
+                    popup: 'error-swal-popup'
+                }
+            });
+        {% else %}
+            Swal.fire({
+                title: '{{ message|escapejs }}',
+                icon: 'success',
+                background: '#D5F9E9',  // Your light green
+                confirmButtonColor: '#7CC9A4',  // Your green
+                customClass: {
+                    popup: 'success-swal-popup'
+                }
+            });
+        {% endif %}
+    {% endfor %}
+</script>
+<style>
+    .error-swal-popup {
+        border-radius: 15px;
+        border: 2px solid #FF6B6B;
+    }
+    .success-swal-popup {
+        border-radius: 15px;
+        border: 2px solid #7CC9A4;
+    }
+</style>
+{% endif %}
+
+   <!-- JS here -->
+   <script src="{% static 'js/vendor/jquery-3.6.0.min.js' %}"></script>
+   <script src="{% static 'js/vendor/waypoints.min.js' %}"></script>
+   <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+   <script src="{% static 'js/meanmenu.js' %}"></script>
+   <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+   <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+   <script src="{% static 'js/magnific-popup.min.js' %}"></script>
+   <script src="{% static 'js/parallax.min.js' %}"></script>
+   <script src="{% static 'js/backToTop.js' %}"></script>
+   <script src="{% static 'js/jquery-ui-slider-range.js' %}"></script>
+   <script src="{% static 'js/nice-select.min.js' %}"></script>
+   <script src="{% static 'js/counterup.min.js' %}"></script>
+   <script src="{% static 'js/ajax-form.js' %}"></script>
+   <script src="{% static 'js/wow.min.js' %}"></script>
+   <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
+   <script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+   <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        // You can add JavaScript functionality here if needed
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form validation can be added here
+            const form = document.querySelector('.signup-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const password1 = document.getElementById('password1').value;
+                    const password2 = document.getElementById('password2').value;
+                    
+                    if (password1 !== password2) {
+                        e.preventDefault();
+                        alert('Passwords do not match!');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

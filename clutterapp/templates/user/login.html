@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 350px;
+            text-align: center;
+        }
+        h1 { color: #333; margin-bottom: 25px; font-size: 24px; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; color: #555; font-weight: 500; }
+        input {
+            width: 100%; padding: 12px; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 16px; box-sizing: border-box;
+        }
+        button {
+            width: 100%; padding: 12px; border: none;
+            border-radius: 6px; font-size: 16px; font-weight: 500;
+            cursor: pointer; transition: background-color 0.3s;
+        }
+        .send-btn { background-color: #4285f4; color: white; margin-bottom: 15px; }
+        .send-btn:hover { background-color: #3367d6; }
+        .verify-btn { background-color: #34a853; color: white; }
+        .verify-btn:hover { background-color: #2d8e47; }
+        .messages { margin-bottom: 15px; }
+        .messages .error { color: red; }
+        .messages .success { color: green; }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Welcome sBack</h1>
+
+        <!-- Flash messages -->
+        <div class="messages">
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <!-- Send OTP Form -->
+       <form method="post" action="/send-otp/">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" class="send-btn">Sends OTP</button>
+        </form>
+
+
+        <!-- Verify OTP Form -->
+        <form method="post" action="{% url 'verify_otp' %}">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="otp">OTP</label>
+                <input type="text" name="otp" id="otp" placeholder="Enter 6-digit OTP" maxlength="6" required>
+            </div>
+            <button type="submit" class="verify-btn">Verify OTP</button>
+        </form>
+    </div>
+</body>
+</html>

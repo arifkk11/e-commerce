@@ -1,0 +1,603 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #7CC9A4;
+            --light-primary: #D5F9E9;
+            --text-color: #333;
+            --light-text: #666;
+            --border-radius: 10px;
+            --box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+        }
+        
+        /* Toggle Button (visible only on mobile/tablet) */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Profile Container (unchanged from original) */
+        .profile-container {
+            display: flex;
+            flex-direction: row;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* Sidebar (unchanged from original) */
+        .sidebar {
+            width: 250px;
+            background-color: #D5F9E9;
+            padding: 20px 0;
+            position: relative;
+        }
+        
+        .sidebar-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #7CC9A4;
+            color: white;
+        }
+        
+        .sidebar-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px;
+            left: 25px;
+            width: calc(100% - 50px);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        /* Main Content (unchanged from original) */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 20px;
+            border: 3px solid #7CC9A4;
+        }
+        
+        .profile-info h2 {
+            margin: 0;
+            color: #333;
+        }
+        
+        .profile-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            color: #7CC9A4;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #D5F9E9;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .info-item {
+            margin-bottom: 15px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            padding: 8px 12px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 3px solid #7CC9A4;
+        }
+        
+        .coins-display {
+            background-color: #D5F9E9;
+            padding: 15px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .coins-display i {
+            color: #FFD700;
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        
+        .coins-amount {
+            font-weight: bold;
+            color: #7CC9A4;
+            font-size: 18px;
+        }
+        
+        .edit-btn, .save-btn, .cancel-btn {
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn:hover, .save-btn:hover, .cancel-btn:hover {
+            background-color: #5aa786;
+        }
+        
+        .save-btn {
+            background-color: #4CAF50;
+        }
+        
+        .cancel-btn {
+            background-color: #f44336;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            /* Show toggle button on mobile/tablet */
+            .sidebar-toggle {
+                display: flex;
+            }
+            
+            /* Adjust profile container */
+            .profile-container {
+                flex-direction: column;
+                margin: 10px;
+            }
+            
+            /* Sidebar styles for mobile */
+            .sidebar {
+                width: 100%;
+                padding: 60px 0 20px 0;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100%;
+                z-index: 999;
+                transition: all 0.3s ease;
+                overflow-y: auto;
+            }
+            
+            .sidebar.active {
+                left: 0;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            /* Overlay for when sidebar is open */
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 998;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            /* Adjust main content */
+            .main-content {
+                padding: 20px;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-pic {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar-item {
+                padding: 12px 20px;
+            }
+            
+            /* Position logout button differently on mobile */
+            .logout-btn {
+                position: relative;
+                bottom: unset;
+                left: unset;
+                width: calc(100% - 40px);
+                margin: 20px;
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Small tablet styles */
+            .profile-container {
+                border-radius: 0;
+                margin: 0;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            .edit-btn, .save-btn, .cancel-btn {
+                margin-top: 5px;
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            /* Phone styles */
+            .profile-pic {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .profile-info h2 {
+                font-size: 1.3rem;
+            }
+            
+            .coins-display {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
+            
+            .coins-display i {
+                font-size: 16px;
+            }
+            
+            .info-value {
+                padding: 6px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .info-label {
+                font-size: 0.9rem;
+            }
+            
+            .sidebar-item {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .sidebar-item i {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% if messages %}
+    {% for message in messages %}
+        {% if 'phone_error' in message.tags %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- Toggle Button (visible only on mobile/tablet) -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay for mobile when sidebar is open -->
+    <div class="overlay"></div>
+    
+    <div class="profile-container">
+        <div class="sidebar">
+            <div class="sidebar-item active">
+                <a href="{% url 'buyerprofile' %}">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'address_list' %}">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Address</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'wishlist' %}">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'myorders' %}">
+                    <i class="fas fa-box"></i>
+                    <span>My Orders</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'cart' %}">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'mycoins' %}">
+                    <i class="fas fa-coins"></i>
+                    <span>My Coins</span>
+                </a>
+            </div>
+            <div class="sidebar-item">
+                <a href="{% url 'homepage' %}">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </a>
+            </div>
+            <a href="{% url 'custom_logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+        
+        <div class="main-content">
+            <div class="profile-header" style="display:flex; align-items:center; gap:20px; background-color:#D5F9E9; padding:20px; border-radius:10px;">
+        
+                <!-- Profile Picture -->
+                <div class="profile-pic-container">
+                    {% if user.picture %}
+                        <img src="{{ user.picture.url }}" alt="Profile Picture" class="profile-pic" style="width:100px; height:100px; border-radius:50%;">
+                    {% elif user.picture_url %}
+                        <img src="{{ user.picture_url }}" alt="Profile Picture" class="profile-pic" style="width:100px; height:100px; border-radius:50%;">
+                    {% else %}
+                        <div class="profile-pic" style="width:100px; height:100px; border-radius:50%; background-color:#7CC9A4; display:flex; justify-content:center; align-items:center; font-size:40px; color:white;">👤</div>
+                    {% endif %}
+                </div>
+
+                <!-- Profile Info -->
+                <div class="profile-info">
+                    <h2 style="margin:0;">{{ user.name|default:user.email }}</h2>
+                    <p style="margin:5px 0;">{{ user.email }}</p>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h3 class="section-title">Personal Information 
+                    <button id="edit-profile-btn" class="edit-btn">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button id="save-profile-btn" class="save-btn" style="display:none;">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button id="cancel-edit-btn" class="cancel-btn" style="display:none;">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                </h3>
+                <form id="profile-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Full Name</span>
+                            <div class="info-value display-mode">{{ user.name|default:user.email }}</div>
+                            <input type="text" name="name" class="edit-mode form-control" value="{{ user.name|default:user.email }}" style="display:none;">
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <div class="info-value">{{ user.email }}</div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Phone Number</span>
+                            <div class="info-value display-mode">{{ buyer_profile.phone|default:"Not added" }}</div>
+                            <input type="tel" name="phone" class="edit-mode form-control" value="{{ buyer_profile.phone }}" style="display:none;">
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Date of Birth</span>
+                            <div class="info-value display-mode">
+                                {% if buyer_profile.dob %}{{ buyer_profile.dob|date:"F j, Y" }}{% else %}Not added{% endif %}
+                            </div>
+                            <input type="date" name="dob" class="edit-mode form-control" 
+                                value="{% if buyer_profile.dob %}{{ buyer_profile.dob|date:'Y-m-d' }}{% endif %}" style="display:none;">
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Gender</span>
+                            <div class="info-value display-mode">
+                                {{ buyer_profile.get_gender_display|default:"Not specified" }}
+                            </div>                    
+                            <select name="gender" class="edit-mode form-control" style="display:none;">
+                                <option value="">Not specified</option>
+                                <option value="male" {% if buyer_profile.gender == 'male' %}selected{% endif %}>Male</option>
+                                <option value="female" {% if buyer_profile.gender == 'female' %}selected{% endif %}>Female</option>
+                                <option value="other" {% if buyer_profile.gender == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="info-label">Profile Picture</span>
+                            <div class="info-value display-mode">
+                                {% if user.picture %}
+                                    <img src="{{ user.picture.url }}" alt="Profile Picture" style="width:100px; height:100px; border-radius:50%;">
+                                {% elif user.picture_url %}
+                                    <img src="{{ user.picture_url }}" alt="Profile Picture" style="width:100px; height:100px; border-radius:50%;">
+                                {% else %}
+                                    <span>No picture uploaded</span>
+                                {% endif %}
+                            </div>
+                            <div class="edit-mode" style="display:none;">
+                                <input type="file" name="picture" accept="image/*">
+                                {% if user.picture or user.picture_url %}
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" name="picture-clear" id="picture-clear">
+                                        <label for="picture-clear">Remove current picture</label>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JS here -->
+    <script src="{% static 'js/vendor/jquery-3.6.0.min.js' %}"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Toggle sidebar on mobile/tablet
+            $('.sidebar-toggle, .overlay').on('click', function() {
+                $('.sidebar').toggleClass('active');
+                $('.overlay').toggleClass('active');
+            });
+            
+            // Close sidebar when clicking on a link (for mobile)
+            $('.sidebar-item a').on('click', function() {
+                $('.sidebar').removeClass('active');
+                $('.overlay').removeClass('active');
+            });
+            
+            // Edit profile functionality
+            $('#edit-profile-btn').on('click', function() {
+                // Switch to edit mode
+                $('.display-mode').hide();
+                $('.edit-mode').show();
+                
+                $('#edit-profile-btn').hide();
+                $('#save-profile-btn').show();
+                $('#cancel-edit-btn').show();
+            });
+            
+            $('#cancel-edit-btn').on('click', function() {
+                // Switch back to display mode
+                $('.display-mode').show();
+                $('.edit-mode').hide();
+                
+                $('#edit-profile-btn').show();
+                $('#save-profile-btn').hide();
+                $('#cancel-edit-btn').hide();
+            });
+            
+            // Save profile
+            $('#save-profile-btn').on('click', function() {
+                $('#profile-form').submit();
+            });
+        });
+    </script>
+</body>
+</html>

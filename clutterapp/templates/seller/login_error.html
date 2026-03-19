@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .error-box {
+            background: #fff;
+            padding: 2rem 3rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        h1 {
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        a:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <h1>⚠️ Login Error</h1>
+        <p>{{ message }}</p>
+        <a href="{% url 'login-error' %}">Back to Login</a>
+    </div>
+</body>
+</html>

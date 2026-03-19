@@ -1,0 +1,73 @@
+<style>
+  .product-card {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-radius: 1.2rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    width: 18rem;
+    margin: 1rem;
+  }
+
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+  }
+
+  .product-card h5 {
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 1rem;
+  }
+
+  .product-card .original-price {
+    color: #888;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+    text-decoration: line-through;
+  }
+
+  .product-card .sale-price {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #e63946;
+  }
+
+  .product-card .badge-discount {
+    display: inline-block;
+    margin-top: 0.8rem;
+    background: linear-gradient(135deg, #06d6a0, #118ab2);
+    color: #fff;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+</style>
+
+<div class="d-flex flex-wrap justify-content-center">
+  {% for item in product_data %}
+    <div class="product-card">
+      <h5>{{ item.product.name }}</h5>
+
+      {% if item.discounted_price %}
+        <p>
+          <span class="original-price">₹{{ item.product.price }}</span>
+          <span class="sale-price">₹{{ item.discounted_price|floatformat:2 }}</span>
+        </p>
+        <span class="badge-discount">
+          {{ item.active_sale.discount_value }}
+          {% if item.active_sale.discount_type == "percentage" %}
+            % OFF
+          {% else %}
+            ₹ OFF
+          {% endif %}
+        </span>
+      {% else %}
+        <p class="sale-price">₹{{ item.product.price }}</p>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>

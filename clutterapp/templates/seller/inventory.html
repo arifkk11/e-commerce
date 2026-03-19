@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Inventory</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #4a6bff;
+      --danger-color: #ff4a4a;
+      --warning-color: #ffc107;
+      --success-color: #28a745;
+      --dark-color: #343a40;
+      --light-color: #f8f9fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      overflow-x: hidden;
+    }
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      width: 250px;
+      height: 100%;
+      top: 0; left: 0;
+      transform: translateX(0);
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-header h2 {
+      margin: 0; font-size: 1.3rem; display: flex; align-items: center;
+    }
+    .sidebar-header h2 i { margin-right: 10px; color: var(--primary-color); }
+    .user-profile { display: flex; align-items: center; margin-top: 15px; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px; }
+    .user-info p { margin: 0; font-size: 0.8rem; color: #aaa; }
+    .nav-menu { padding: 20px 0; }
+    .nav-item { padding: 12px 20px; display: flex; align-items: center; transition: all 0.3s; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary-color); }
+    .nav-item i { margin-right: 10px; }
+
+    /* Mobile menu toggle */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px; left: 15px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px; height: 40px;
+      font-size: 1.2rem;
+      z-index: 1100;
+      cursor: pointer;
+    }
+    .overlay {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 900;
+    }
+    .overlay.active { display: block; }
+
+    /* Main content */
+    .main-content { padding: 20px; grid-column: 2; }
+    .header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 10px;
+    }
+    .header h1 { margin: 0; font-size: 1.8rem; color: var(--dark-color); }
+
+    /* Sections */
+    .section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .section-title { font-size: 1.2rem; font-weight: 600; margin: 0; }
+    .btn { padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; }
+    .btn-outline { border: 1px solid #ddd; background: transparent; }
+    .btn-outline:hover { background: #f5f5f5; }
+
+    /* Tables */
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .table th, .table td { text-align: left; padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+
+    /* Status badges */
+    .status { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+    .status-out { background: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+    .status-low { background: #FFF3E0; color: #E65100; border: 1px solid #FFB74D; animation: pulse 2s infinite; }
+    .status-ok { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+    @keyframes pulse { 0%{opacity:1;} 50%{opacity:0.8;} 100%{opacity:1;} }
+
+    .action-btn { border: none; background: none; cursor: pointer; color: #666; margin: 0 5px; }
+    .action-btn:hover { color: var(--primary-color); }
+
+    /* Responsive tweaks */
+    @media (max-width: 992px) {
+      .dashboard-container { grid-template-columns: 1fr; }
+      .sidebar { transform: translateX(-100%); position: fixed; }
+      .sidebar.active { transform: translateX(0); }
+      .main-content { grid-column: 1; padding: 20px 15px; }
+      .menu-toggle { display: block; }
+    }
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.5rem; }
+    }
+    @media (max-width: 576px) {
+      .table { min-width: unset; }
+      .table thead { display: none; }
+      .table tr { display: block; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; padding: 10px; }
+      .table td { display: flex; justify-content: space-between; padding: 8px 10px; font-size: 0.85rem; }
+      .table td::before { content: attr(data-label); font-weight: bold; color: #555; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toggle button -->
+  <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2><i class="fas fa-store"></i> Seller Portal</h2>
+        <div class="user-profile">
+          <div class="user-avatar">
+            <img src="{{ user.profile_image}}" alt="Profile Picture" style="width:48px;height:48px;border-radius:50%;">
+          </div>
+          <div class="user-info"><p>Seller</p></div>
+        </div>
+      </div>
+      <div class="nav-menu">
+        <div class="nav-item"><a href="{% url 'seller_dashbord' %}" style="text-decoration:none;color:white;"><i class="fas fa-tachometer-alt"></i> Dashboard</a></div>
+        <div class="nav-item"><a href="{% url 'seller_products' %}" style="text-decoration:none;color:white;"><i class="fas fa-box"></i> Products</a></div>
+        <div class="nav-item"><a href="{% url 'seller_orders' %}" style="text-decoration:none;color:white;"><i class="fas fa-shopping-cart"></i> Orders</a></div>
+        <div class="nav-item"><a href="{% url 'seller_report' %}" style="text-decoration:none;color:white;"><i class="fas fa-chart-line"></i> Reports</a></div>
+        <div class="nav-item active"><a href="{% url 'seller_inventory' %}" style="text-decoration:none;color:white;"><i class="fas fa-warehouse"></i> Inventory</a></div>
+        <a href="{% url 'custom_logout' %}" class="nav-item" style="text-decoration:none;color:red;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header"><h1>Seller Inventory</h1></div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Low Stock Products</h2>
+          <input type="text" id="productSearch" placeholder="Search by ID or Name..."
+          style="padding:6px 10px;border:1px solid #ccc;border-radius:5px;">
+          <div> <button id="exportBtn" class="btn btn-outline"><i class="fas fa-download"></i> Export</button></div>
+        </div>
+
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product ID</th><th>Product Name</th><th>Current Stock</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              <tr>
+                <td data-label="Product ID">#PROD-{{ product.id }}</td>
+                <td data-label="Product Name">{{ product.name }}</td>
+                <td data-label="Current Stock">{{ product.stock_quantity }}</td>
+                <td data-label="Status">
+                  {% if product.stock_quantity == 0 %}
+                    <span class="status status-out">Sold Out</span>
+                  {% elif product.stock_quantity <= 2 %}
+                    <span class="status status-low">Very Low</span>
+                  {% elif product.stock_quantity <= 5 %}
+                    <span class="status status-warning">Low Stock</span>
+                  {% else %}
+                    <span class="status status-ok">Available</span>
+                  {% endif %}
+                </td>
+                <td data-label="Actions">
+                  <a href="{% url 'product_view' product.id %}" class="action-btn"><i class="fas fa-eye"></i></a>
+                  <a href="{% url 'product_edit' product.id %}" class="action-btn"><i class="fas fa-edit"></i></a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="6" class="text-center">No products found. Add your first product!</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle for mobile
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+
+    document.getElementById("productSearch").addEventListener("keyup", function () {
+      let filter = this.value.toLowerCase();
+      let rows = document.querySelectorAll(".table tbody tr");
+
+      rows.forEach(row => {
+        let idCell = row.cells[0]?.textContent.toLowerCase() || "";
+        let nameCell = row.cells[1]?.textContent.toLowerCase() || "";
+
+        if (idCell.includes(filter) || nameCell.includes(filter)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    });
+    //export pdf
+    document.getElementById("exportBtn").addEventListener("click", function() {
+        window.location.href = "{% url 'export_inventory_pdf' %}";
+    });
+
+  </script>
+</body>
+</html>

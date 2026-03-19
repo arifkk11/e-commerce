@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | 404 Error</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #D5F9E9 0%, #ffffff 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+        
+        .logo {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #7CC9A4 0%, #D5F9E9 100%);
+            border-radius: 50%;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(124, 201, 164, 0.3);
+        }
+        
+        .logo img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 50%;
+        }
+        
+        .error-code {
+            font-size: 120px;
+            font-weight: 800;
+            color: #7CC9A4;
+            line-height: 1;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.1);
+        }
+        
+        .error-title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .error-message {
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: #7CC9A4;
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 201, 164, 0.4);
+        }
+        
+        .btn-primary:hover {
+            background: #63b58c;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(124, 201, 164, 0.5);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #7CC9A4;
+            border: 2px solid #7CC9A4;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(124, 201, 164, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .search-box {
+            max-width: 500px;
+            margin: 30px auto;
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 16px 60px 16px 20px;
+            border: 2px solid #D5F9E9;
+            border-radius: 50px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            border-color: #7CC9A4;
+            box-shadow: 0 0 0 3px rgba(124, 201, 164, 0.2);
+        }
+        
+        .search-button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background: #7CC9A4;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            height: calc(100% - 10px);
+            width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-button:hover {
+            background: #63b58c;
+        }
+        
+        .decoration {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.15;
+        }
+        
+        .decoration-1 {
+            top: 10%;
+            left: 15%;
+            font-size: 100px;
+            color: #7CC9A4;
+        }
+        
+        .decoration-2 {
+            bottom: 15%;
+            right: 15%;
+            font-size: 80px;
+            color: #7CC9A4;
+        }
+        
+        .decoration-3 {
+            top: 40%;
+            left: 10%;
+            font-size: 60px;
+            color: #7CC9A4;
+        }
+        
+        .decoration-4 {
+            bottom: 25%;
+            right: 20%;
+            font-size: 70px;
+            color: #7CC9A4;
+        }
+        
+        @media (max-width: 768px) {
+            .error-code {
+                font-size: 100px;
+            }
+            
+            .error-title {
+                font-size: 28px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+            
+            .decoration {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            .error-code {
+                font-size: 80px;
+            }
+            
+            .error-title {
+                font-size: 24px;
+            }
+            
+            .error-message {
+                font-size: 16px;
+            }
+            
+            .logo {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration decoration-1">
+        <i class="fas fa-leaf"></i>
+    </div>
+    <div class="decoration decoration-2">
+        <i class="fas fa-tree"></i>
+    </div>
+    <div class="decoration decoration-3">
+        <i class="fas fa-feather-alt"></i>
+    </div>
+    <div class="decoration decoration-4">
+        <i class="fas fa-spa"></i>
+    </div>
+    
+    <div class="container">
+        <div class="logo">
+            <!-- In a real implementation, you would use: -->
+            <!-- <img src="{% static 'img/logo/logo.png' %}" alt="Company Logo"> -->
+            <!-- For this example, I'm using a placeholder -->
+            <img src="{% static 'img/logo/logo.png' %}" alt="Company Logo">        
+        </div>
+        
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">Page Not Found</h2>
+        
+        <p class="error-message">
+            Sorry, the page you're looking for doesn't exist or has been moved. 
+            
+        </p>
+        
+        
+        <div class="action-buttons">
+            <a href="/" class="btn btn-primary">
+                <i class="fas fa-home"></i>&nbsp;&nbsp;Go to Homepage
+            </a>
+            {% comment %} <a href="#" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>&nbsp;&nbsp;Go Back
+            </a> {% endcomment %}
+        </div>
+    </div>
+
+   
+</body>
+</html>

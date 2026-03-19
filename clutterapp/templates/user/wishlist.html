@@ -1,0 +1,686 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wishlist</title>
+    
+    <style>
+        :root {
+            --primary-color: #7CC9A4;
+            --light-primary: #D5F9E9;
+            --text-color: #333;
+            --light-text: #666;
+            --border-radius: 10px;
+            --box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: var(--text-color);
+        }
+        
+        /* Toggle Button (visible only on mobile/tablet) */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        /* Profile Container */
+        .profile-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: #D5F9E9;
+            padding: 20px 0;
+            position: relative;
+        }
+        
+        .sidebar-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #7CC9A4;
+            color: white;
+        }
+        
+        .sidebar-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px;
+            left: 25px;
+            width: calc(100% - 50px);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .wishlist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .wishlist-header h2 {
+            color: #333;
+            margin: 0;
+        }
+        
+        .wishlist-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .wishlist-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .wishlist-item {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .wishlist-item:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+        
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .item-details {
+            padding: 15px;
+        }
+        
+        .item-title {
+            font-weight: bold;
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .item-price {
+            color: #7CC9A4;
+            font-weight: bold;
+            margin: 5px 0;
+            font-size: 18px;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+        
+        .item-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .add-to-cart {
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-grow: 1;
+            transition: all 0.3s;
+        }
+        
+        .add-to-cart:hover {
+            background-color: #5aa786;
+        }
+        
+        .remove-item {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 10px;
+            transition: all 0.3s;
+        }
+        
+        .remove-item:hover {
+            color: #f44336;
+        }
+        
+        .empty-wishlist {
+            text-align: center;
+            padding: 50px 0;
+            color: #666;
+        }
+        
+        .empty-wishlist i {
+            font-size: 50px;
+            color: #D5F9E9;
+            margin-bottom: 20px;
+        }
+        
+        .empty-wishlist h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .browse-products {
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .browse-products:hover {
+            background-color: #5aa786;
+        }
+        
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #f44336;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .move-all-to-cart {
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .move-all-to-cart:hover {
+            background-color: #5aa786;
+        }
+        
+        .wishlist-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .sort-options {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            /* Show toggle button on mobile/tablet */
+            .sidebar-toggle {
+                display: flex;
+            }
+            
+            /* Adjust profile container */
+            .profile-container {
+                flex-direction: column;
+                margin: 10px;
+            }
+            
+            /* Sidebar styles for mobile */
+            .sidebar {
+                width: 100%;
+                padding: 60px 0 20px 0;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100%;
+                z-index: 999;
+                transition: all 0.3s ease;
+                overflow-y: auto;
+            }
+            
+            .sidebar.active {
+                left: 0;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            /* Overlay for when sidebar is open */
+            .overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 998;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            /* Adjust main content */
+            .main-content {
+                padding: 20px;
+            }
+            
+            .wishlist-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .wishlist-items {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .sidebar-item {
+                padding: 12px 20px;
+            }
+            
+            /* Position logout button differently on mobile */
+            .logout-btn {
+                position: relative;
+                bottom: unset;
+                left: unset;
+                width: calc(100% - 40px);
+                margin: 20px;
+                padding: 12px;
+            }
+            
+            .wishlist-actions {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .sort-options {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                border-radius: 0;
+                margin: 0;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .wishlist-header h2 {
+                font-size: 22px;
+            }
+            
+            .wishlist-items {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 15px;
+            }
+            
+            .item-image {
+                height: 150px;
+            }
+            
+            .item-title {
+                font-size: 14px;
+            }
+            
+            .item-price {
+                font-size: 16px;
+            }
+            
+            .move-all-to-cart {
+                width: 100%;
+            }
+            
+            .empty-wishlist i {
+                font-size: 40px;
+            }
+            
+            .empty-wishlist h3 {
+                font-size: 18px;
+            }
+            
+            .browse-products {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                padding: 60px 0 20px 0;
+            }
+            
+            .sidebar-item {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .wishlist-header h2 {
+                font-size: 20px;
+            }
+            
+            .wishlist-items {
+                grid-template-columns: 1fr;
+            }
+            
+            .item-image {
+                height: 180px;
+            }
+            
+            .item-title {
+                font-size: 14px;
+            }
+            
+            .item-price {
+                font-size: 16px;
+            }
+            
+            .move-all-to-cart {
+                width: 100%;
+                font-size: 14px;
+            }
+            
+            .empty-wishlist i {
+                font-size: 35px;
+            }
+            
+            .empty-wishlist h3 {
+                font-size: 16px;
+            }
+            
+            .browse-products {
+                width: 100%;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Toggle Button (visible only on mobile/tablet) -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay for mobile when sidebar is open -->
+    <div class="overlay"></div>
+    
+    <div class="profile-container">
+        <div class="sidebar">
+            <a href="{% url 'buyerprofile' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </div>
+            </a>
+
+            <a href="{% url 'address_list' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item ">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Address</span>
+                </div>
+            </a>
+
+            <a href="{% url 'wishlist' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item active">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                </div>
+            </a>
+
+            <a href="{% url 'myorders' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-box"></i>
+                    <span>My Orders</span>
+                </div>
+            </a>
+
+            <a href="{% url 'cart' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item ">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                </div>
+            </a>
+
+            <a href="{% url 'mycoins' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item ">
+                    <i class="fas fa-coins"></i>
+                    <span>My Coins</span>
+                </div>
+            </a>
+
+            <a href="{% url 'homepage' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </div>
+            </a>
+
+            <a href="{% url 'custom_logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div class="wishlist-header">
+                <div>
+                    <h2>My Wishlist</h2>
+                    <p class="wishlist-count">{{ wishlist_items|length }} items</p>
+                </div>
+                <select class="sort-options">
+                    <option>Sort by</option>
+                    <option>Recently Added</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Discount %</option>
+                </select>
+            </div>
+
+            {% if wishlist_items %}
+            <div class="wishlist-actions">
+                <button class="move-all-to-cart" id="move-all-to-cart">
+                    <i class="fas fa-cart-plus"></i> Move All to Cart
+                </button>
+            </div>
+            {% endif %}
+
+            {% if wishlist_items %}
+                <div class="wishlist-items">
+                    {% for item in wishlist_items %}
+                        <div class="wishlist-item">
+                            {% if item.product.get_discount_percentage %}
+                                <div class="discount-badge">{{ item.product.get_discount_percentage }}% OFF</div>
+                            {% endif %}
+                            
+                            <a href="{% url 'product_details' item.product.id %}">
+                                <img src="{{ item.product.get_first_image_url }}" alt="{{ item.product.name }}" class="item-image">
+                            </a>
+
+                            <div class="item-details">
+                                <h3 class="item-title">{{ item.product.name }}</h3>
+
+                                <div class="item-price">
+                                  ₹{{item.product.get_final_price}}
+                                  
+                                </div>
+
+                                <div class="item-actions">
+                                    <form action="{% url 'add_to_cart' item.product.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="add-to-cart" data-item-id="{{ item.product.id }}" {% if product.stock_quantity == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}>
+                                            <i class="fas fa-cart-plus"></i> Add to Cart
+                                        </button>
+                                    </form>
+                                    {% comment %} <button type="submit" class="add-to-cart" {% if product.stock_quantity == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}>Add to Cart</button> {% endcomment %}
+
+
+                                    <a href="{% url 'remove_from_wishlist' item.product.id %}" class="remove-item">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+            <div class="empty-wishlist">
+                <i class="fas fa-heart"></i>
+                <h3>Your Wishlist is Empty</h3>
+                <p>You haven't added any items to your wishlist yet.</p>
+                <button class="browse-products" onclick="window.location.href='/products/'">
+                    Browse Products
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.querySelector('.sidebar-toggle');
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            
+            // Toggle sidebar on mobile/tablet
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking on overlay
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+            
+            // Close sidebar when clicking on a link (for mobile)
+            document.querySelectorAll('.sidebar-item a').forEach(link => {
+                link.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+            });
+            
+            // Add to cart functionality
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const itemId = this.getAttribute('data-item-id');
+                    // In a real app, you would make an AJAX call to add to cart
+                    alert(`Item ${itemId} added to cart!`);
+                });
+            });
+            
+            // Move all to cart functionality
+            const moveAllBtn = document.getElementById('move-all-to-cart');
+            if (moveAllBtn) {
+                moveAllBtn.addEventListener('click', function() {
+                    if (confirm('Add all items to your cart?')) {
+                        // In a real app, you would make an AJAX call for all items
+                        alert('All items added to cart!');
+                    }
+                });
+            }
+            
+            // Sort functionality
+            document.querySelector('.sort-options').addEventListener('change', function() {
+                alert(`Sorted by: ${this.value}`);
+            });
+        });
+    </script>
+</body>
+</html>

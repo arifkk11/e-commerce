@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <style>
+    :root {
+      --primary-color: #4a6bff;
+      --secondary-color: #f8f9fa;
+      --danger-color: #ff4a4a;
+      --warning-color: #ffc107;
+      --success-color: #28a745;
+      --dark-color: #343a40;
+      --light-color: #f8f9fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      overflow-x: hidden;
+    }
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background-color: var(--dark-color);
+      color: white;
+      padding: 20px 0;
+      position: fixed;
+      width: 250px;
+      height: 100%;
+      top: 0; left: 0;
+      transform: translateX(0);
+      transition: transform 0.3s ease-in-out;
+      z-index: 1000;
+    }
+    .sidebar-header {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .sidebar-header h2 {
+      margin: 0; font-size: 1.3rem; display: flex; align-items: center;
+    }
+    .sidebar-header h2 i { margin-right: 10px; color: var(--primary-color); }
+    .user-profile { display: flex; align-items: center; margin-top: 15px; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; margin-right: 10px; }
+    .user-info p { margin: 0; font-size: 0.8rem; color: #aaa; }
+    .nav-menu { padding: 20px 0; }
+    .nav-item { padding: 12px 20px; display: flex; align-items: center; transition: all 0.3s; }
+    .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary-color); }
+    .nav-item i { margin-right: 10px; }
+
+    /* Mobile menu toggle */
+    .menu-toggle {
+      display: none;
+      position: fixed;
+      top: 15px; left: 15px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      width: 40px; height: 40px;
+      font-size: 1.2rem;
+      z-index: 1100;
+      cursor: pointer;
+    }
+    .overlay {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 900;
+    }
+    .overlay.active { display: block; }
+
+    /* Main content */
+    .main-content { padding: 20px; grid-column: 2; }
+    .header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 10px;
+    }
+    .header h1 { margin: 0; font-size: 1.8rem; color: var(--dark-color); }
+
+    /* Sections */
+    .section {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+    .section-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #eee;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .btn { padding: 8px 15px; border-radius: 5px; cursor: pointer; border: none; }
+    .btn-outline { border: 1px solid #ddd; background: transparent; }
+    .btn-outline:hover { background: #f5f5f5; }
+
+    /* Tables */
+    .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table { width: 100%; border-collapse: collapse; min-width: 700px; }
+    .table th, .table td { text-align: left; padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    .status { padding: 5px 10px; border-radius: 20px; font-size: 0.8rem; }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-completed { background: #d4edda; color: #155724; }
+    .status-processing { background: #cce5ff; color: #004085; }
+    .status-low { background: #f8d7da; color: #721c24; }
+    .action-btn { border: none; background: none; cursor: pointer; color: #666; margin: 0 5px; }
+    .action-btn:hover { color: var(--primary-color); }
+
+    /* Responsive tweaks */
+    @media (max-width: 992px) {
+      .dashboard-container { grid-template-columns: 1fr; }
+      .sidebar { transform: translateX(-100%); position: fixed; }
+      .sidebar.active { transform: translateX(0); }
+      .main-content { grid-column: 1; padding: 20px 15px; }
+      .menu-toggle { display: block; }
+    }
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.5rem; }
+    }
+    @media (max-width: 576px) {
+      .table { min-width: unset; }
+      .table thead { display: none; }
+      .table tr { display: block; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 6px; padding: 10px; }
+      .table td { display: flex; justify-content: space-between; padding: 8px 10px; font-size: 0.85rem; }
+      .table td::before { content: attr(data-label); font-weight: bold; color: #555; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Toggle button -->
+  <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+  <div class="overlay" id="overlay"></div>
+
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+          <h2><i class="fas fa-store"></i> Seller Portal</h2>
+          <div class="user-profile">
+              <div class="user-avatar">
+                <img src="{{ user.profile_image }}" alt="Profile Picture" style="width:48px; height:48px; border-radius:50%;">
+              </div>
+              <div class="user-info">
+                <p>Seller</p>
+              </div>
+          </div>
+      </div>
+      <div class="nav-menu">
+        <div class="nav-item"><a href="{% url 'seller_dashbord' %}" style="text-decoration:none;color:white;"><i class="fas fa-tachometer-alt"></i> Dashboard</a></div>
+        <div class="nav-item"><a href="{% url 'seller_products' %}" style="text-decoration:none;color:white;"><i class="fas fa-box"></i> Products</a></div>
+        <div class="nav-item active"><a href="{% url 'seller_orders' %}" style="text-decoration:none;color:white;"><i class="fas fa-shopping-cart"></i> Orders</a></div>
+        <div class="nav-item"><a href="{% url 'seller_report' %}" style="text-decoration:none;color:white;"><i class="fas fa-chart-line"></i> Reports</a></div>
+        <div class="nav-item"><a href="{% url 'seller_inventory' %}" style="text-decoration:none;color:white;"><i class="fas fa-warehouse"></i> Inventory</a></div>
+        <a href="{% url 'custom_logout' %}" class="nav-item" style="text-decoration:none;color:red;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="header">
+        <h1>Seller Orders</h1>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Recent Orders</h2>
+          <input type="text"  id="searchInput" placeholder="Search orders..."  onkeyup="searchOrders()"
+           style="padding:6px 10px;border:1px solid #ccc;border-radius:5px;">
+          {% comment %} <input type="text" id="searchInput" placeholder="Search orders..." onkeyup="searchOrders()"> {% endcomment %}
+          <div class="section-actions"><button class="btn btn-outline"><i class="fas fa-download"></i> Export</button></div>
+        </div>
+
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Size</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for order in orders %}
+              <tr>
+                <td data-label="Order ID">#ORD-{{ order.id }}</td>
+                <td data-label="Customer">{{ order.buyer.user.name|default:order.buyer.user.email }}</td>
+                <td data-label="Date">{{ order.created_at|date:"M d, Y" }}</td>
+                <td data-label="Amount">₹{{ order.total_after_discount }}</td>
+                <td data-label="Status">{{ order.get_status_display }}</td>
+                <td data-label="Size">
+                  {% for item in order.items.all %}
+                    {% if item.variant %} {{ item.variant.size }}{% if not forloop.last %}, {% endif %}{% else %}N/A{% endif %}
+                  {% endfor %}
+                </td>
+                <td data-label="Actions">
+                  <a href="{% url 'seller_order_detail' order.id %}" class="action-btn"><i class="fas fa-eye"></i></a>
+                  <a href="{% url 'seller_update_shipping' order.id %}" class="action-btn"><i class="fas fa-truck"></i></a>
+                </td>
+                
+              </tr>
+              {% empty %}
+              <tr><td colspan="7">No orders found for your products.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar toggle for mobile
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    });
+    overlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      overlay.classList.remove('active');
+    });
+    // Search functionality
+    function searchOrders() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase().trim();
+        const table = document.querySelector(".table tbody");
+        const rows = table.getElementsByTagName("tr");
+
+        for (let i = 0; i < rows.length; i++) {
+            const row = rows[i];
+
+            const orderIdCell = row.cells[0];
+            const customerCell = row.cells[1];
+            const statusCell = row.cells[4];
+
+            if (!orderIdCell) continue;
+
+            const orderIdText = orderIdCell.textContent.toLowerCase().trim();
+            const customerText = customerCell.textContent.toLowerCase().trim();
+            const statusText = statusCell.textContent.toLowerCase().trim();
+
+            // Match normally, but keep "pending" and "cod pending" separate
+            let statusMatch = false;
+
+            if (filter) {
+                if (statusText === filter) {
+                    statusMatch = true;
+                }
+            }
+
+            if (
+                orderIdText.includes(filter) ||
+                customerText.includes(filter) ||
+                statusMatch
+            ) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+    // Export pdf functionality (basic example)
+    document.querySelector(".section-actions .btn").addEventListener("click", function () {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        doc.setFontSize(14);
+        doc.text("Seller Orders Report", 14, 15);
+
+        // Extract visible rows
+        const rows = [];
+        const tableRows = document.querySelectorAll(".table tbody tr");
+
+        tableRows.forEach(row => {
+            if (row.style.display !== "none") {
+                const cells = row.querySelectorAll("td");
+                const rowData = Array.from(cells).map(cell => cell.innerText.trim());
+                rows.push(rowData);
+            }
+        });
+
+        // Headers
+        const headers = [["Order ID", "Customer", "Date", "Amount", "Status", "Size"]];
+
+        // Generate table
+        doc.autoTable({
+            head: headers,
+            body: rows,
+            startY: 25,
+            styles: { fontSize: 10, cellPadding: 3 },
+            headStyles: { fillColor: [74, 107, 255] },
+        });
+
+        // Save file
+        doc.output("dataurlnewwindow")
+    });
+        
+
+    
+  </script>
+</body>
+</html>

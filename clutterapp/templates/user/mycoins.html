@@ -1,0 +1,750 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Coins</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        
+        /* Toggle Button (visible only on mobile/tablet) */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1000;
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .profile-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 250px;
+            background-color: #D5F9E9;
+            padding: 20px 0;
+            position: relative;
+        }
+        
+        .sidebar-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-item a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .sidebar-item:hover, .sidebar-item.active {
+            background-color: #7CC9A4;
+            color: white;
+        }
+        
+        .sidebar-item i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 30px;
+        }
+        
+        .coins-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .coins-header h2 {
+            color: #333;
+            margin: 0;
+        }
+        
+        .coins-balance-card {
+            background: linear-gradient(135deg, #FFD700, #FFC000);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(255, 200, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .coins-balance-card::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+        
+        .balance-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .balance-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .balance-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .coins-value {
+            background-color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .coins-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            color: #7CC9A4;
+            margin-bottom: 15px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #D5F9E9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .earn-coins-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .earn-option {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .earn-option:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transform: translateY(-3px);
+        }
+        
+        .earn-option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .earn-option-title {
+            font-weight: bold;
+            color: #333;
+            margin: 0;
+        }
+        
+        .coins-reward {
+            background-color: #D5F9E9;
+            color: #2e7d32;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .earn-option-desc {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .earn-action {
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .earn-action:hover {
+            background-color: #5aa786;
+        }
+        
+        .transactions-list {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+        
+        .transaction-details {
+            flex: 1;
+        }
+        
+        .transaction-title {
+            font-weight: bold;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+        
+        .transaction-date {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .transaction-amount {
+            font-weight: bold;
+        }
+        
+        .amount-earned {
+            color: #2e7d32;
+        }
+        
+        .amount-redeemed {
+            color: #c62828;
+        }
+        
+        .redeem-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .redeem-option {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .redeem-option:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .redeem-option-img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            margin-bottom: 15px;
+        }
+        
+        .redeem-option-title {
+            font-weight: bold;
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+        
+        .redeem-option-cost {
+            color: #7CC9A4;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .redeem-btn {
+            background-color: #FFD700;
+            color: #333;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .redeem-btn:hover {
+            background-color: #FFC000;
+        }
+        
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: absolute;
+            bottom: 20px;
+            left: 25px;
+            width: calc(100% - 50px);
+            text-align: center;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        
+        .logout-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .tab-container {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            border-bottom-color: #7CC9A4;
+            color: #7CC9A4;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Overlay for mobile when sidebar is open */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            /* Show toggle button on mobile/tablet */
+            .sidebar-toggle {
+                display: flex;
+            }
+            
+            /* Adjust profile container */
+            .profile-container {
+                flex-direction: column;
+                margin: 10px;
+            }
+            
+            /* Sidebar styles for mobile */
+            .sidebar {
+                width: 100%;
+                padding: 60px 0 20px 0;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100%;
+                z-index: 999;
+                transition: all 0.3s ease;
+                overflow-y: auto;
+            }
+            
+            .sidebar.active {
+                left: 0;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            }
+            
+            /* Adjust main content */
+            .main-content {
+                padding: 20px;
+            }
+            
+            .coins-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .earn-coins-options {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+            
+            .sidebar-item {
+                padding: 12px 20px;
+            }
+            
+            /* Position logout button differently on mobile */
+            .logout-btn {
+                position: relative;
+                bottom: unset;
+                left: unset;
+                width: calc(100% - 40px);
+                margin: 20px;
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-container {
+                border-radius: 0;
+                margin: 0;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+            
+            .coins-header h2 {
+                font-size: 22px;
+            }
+            
+            .balance-amount {
+                font-size: 30px;
+            }
+            
+            .earn-coins-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .redeem-options {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .tab-container {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .tab {
+                padding: 10px 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                padding: 60px 0 20px 0;
+            }
+            
+            .sidebar-item {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .main-content {
+                padding: 10px;
+            }
+            
+            .coins-header h2 {
+                font-size: 20px;
+            }
+            
+            .coins-balance-card {
+                padding: 20px;
+            }
+            
+            .balance-amount {
+                font-size: 26px;
+            }
+            
+            .earn-option {
+                padding: 15px;
+            }
+            
+            .transaction-item {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .transaction-amount {
+                align-self: flex-end;
+            }
+            
+            .redeem-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Toggle Button (visible only on mobile/tablet) -->
+    <button class="sidebar-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay for mobile when sidebar is open -->
+    <div class="overlay"></div>
+    
+    <div class="profile-container">
+        <div class="sidebar">
+            <a href="{% url 'buyerprofile' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </div>
+            </a>
+
+            <a href="{% url 'address_list' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item ">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Address</span>
+                </div>
+            </a>
+
+            <a href="{% url 'wishlist' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-heart"></i>
+                    <span>Wishlist</span>
+                </div>
+            </a>
+
+            <a href="{% url 'myorders' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-box"></i>
+                    <span>My Orders</span>
+                </div>
+            </a>
+
+            <a href="{% url 'cart' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Cart</span>
+                </div>
+            </a>
+
+            <a href="{% url 'mycoins' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item active">
+                    <i class="fas fa-coins"></i>
+                    <span>My Coins</span>
+                </div>
+            </a>
+
+            <a href="{% url 'homepage' %}" style="text-decoration:none; color:inherit;">
+                <div class="sidebar-item">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back</span>
+                </div>
+            </a>
+
+            <a href="{% url 'custom_logout' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+        
+        <div class="main-content">
+            <div class="coins-header">
+                <h2><i class="fas fa-coins"></i> My Coins</h2>
+            </div>
+            
+            <div class="coins-balance-card">
+                <div class="balance-title">
+                    <i class="fas fa-wallet"></i> Your Coin Balance
+                </div>
+                <div class="balance-amount">{{ total_coins }} Coins</div>
+                <div class="balance-subtitle">Earn more coins to unlock rewards</div>
+                <div class="coins-value">≈ ₹ {{coin_worth }} worth of rewards</div>
+            </div>
+            
+            <div class="tab-container">
+                <div class="tab active" data-tab="earn">Earn Coins</div>
+                <div class="tab" data-tab="history">Transaction History</div>
+            </div>
+            
+            <div class="tab-content active" id="earn-tab">
+                <div class="coins-section">
+                    <h3 class="section-title"><i class="fas fa-plus-circle"></i> Ways to Earn Coins</h3>
+                    <div class="earn-coins-options">
+                        <div class="earn-option">
+                            <div class="earn-option-header">
+                                <h4 class="earn-option-title">Complete Your Profile</h4>
+                                <span class="coins-reward">
+                                    <i class="fas fa-coins"></i> +50
+                                </span>
+                            </div>
+                            <p class="earn-option-desc">Add missing details to your profile to earn coins</p>
+                            {% if user.buyer_profile and user.buyer_profile.is_complete %}
+                                <button disabled>Already Redeemed</button>
+                            {% else %}
+                                <button class="earn-action" onclick="window.location.href='{% url 'buyerprofile' %}'">Complete Now</button>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="earn-option">
+                            <div class="earn-option-header">
+                                <h4 class="earn-option-title">Declutter</h4>
+                                <span class="coins-reward">
+                                    <i class="fas fa-coins"></i> +100*
+                                </span>
+                            </div>
+                            <p class="earn-option-desc">Submit Your Old or Unused Cloth With us. *(rewards is getting after collecting)</p>
+                            <button class="earn-action" onclick="window.location.href='{% url 'declutter_window' %}'">Declutter Now</button>
+                        </div>
+                        
+                        <div class="earn-option">
+                            <div class="earn-option-header">
+                                <h4 class="earn-option-title">Refer a Friend</h4>
+                                <span class="coins-reward">
+                                    <i class="fas fa-coins"></i> +100
+                                </span>
+                            </div>
+                            <p class="earn-option-desc">Get coins when your friend signs up and makes their first purchase</p>
+                            <button class="earn-action">Invite Friends</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="history-tab">
+                <div class="coins-section">
+                    <h3 class="section-title"><i class="fas fa-history"></i> Coin History</h3>
+                    <div class="transactions-list">
+                        {% for transaction in coin_transactions %}
+                        <div class="transaction-item">
+                            <div class="transaction-details">
+                                <h4 class="transaction-title">{{ transaction.description }}</h4>
+                                <div class="transaction-date">{{ transaction.date|date:"F j, Y" }}</div>
+                            </div>
+                            <div class="transaction-amount {% if transaction.amount > 0 %}amount-earned{% else %}amount-redeemed{% endif %}">
+                                {% if transaction.amount > 0 %}+{% endif %}{{ transaction.amount }} Coins
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="transaction-item">
+                            <div class="transaction-details">
+                                <h4 class="transaction-title">No transactions yet</h4>
+                                <div class="transaction-date">Start earning coins to see your history</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        
+        // Toggle sidebar on mobile/tablet
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking on overlay
+        overlay.addEventListener('click', function() {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+        
+        // Close sidebar when clicking on a link (for mobile)
+        document.querySelectorAll('.sidebar-item a').forEach(link => {
+            link.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                this.classList.add('active');
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId + '-tab').classList.add('active');
+            });
+        });
+        
+        // Earn coin actions
+        document.querySelectorAll('.earn-action').forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.closest('.earn-option').querySelector('.earn-option-title').textContent;
+                alert(`You would earn coins for: ${action}`);
+                // In a real app, you would trigger the appropriate action
+            });
+        });
+    });
+</script>
+</body>
+</html>

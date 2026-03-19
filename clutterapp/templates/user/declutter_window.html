@@ -1,0 +1,302 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sell With Us | Clutter & Co</title>
+    <style>
+        :root {
+            --primary-light: #D5F9E9;
+            --primary-medium: #7CC9A4;
+            --primary-dark: #2E7D5F;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-dark);
+            background-color: #f8f8f8;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .sell-header {
+            background-color: white;
+            padding: 30px 0;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .sell-header h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .sell-header p {
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto 25px;
+        }
+        
+        /* Button Styles (matching your hero section) */
+        .fill-btn-r, .fill-btn-l {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            border-radius: 30px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .fill-btn-r {
+            background-color: var(--primary-medium);
+            color: white;
+            border: 2px solid var(--primary-medium);
+        }
+        
+        .fill-btn-l {
+            background-color: white;
+            color: var(--primary-medium);
+            border: 2px solid var(--primary-medium);
+        }
+        
+        .fill-btn-r:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .fill-btn-l:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
+        
+        /* Seller Benefits Section */
+        .benefits-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .benefit-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        
+        .benefit-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .benefit-icon {
+            font-size: 2.5rem;
+            color: var(--primary-medium);
+            margin-bottom: 20px;
+        }
+        
+        .benefit-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+        
+        /* How It Works Section */
+        .how-it-works {
+            background-color: var(--primary-light);
+            padding: 50px;
+            border-radius: 15px;
+            margin-bottom: 50px;
+        }
+        
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            position: relative;
+        }
+        
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background-color: var(--primary-medium);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+        
+        /* Connecting line between steps */
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--primary-medium);
+            z-index: 0;
+        }
+        
+        /* Seller CTA Section */
+        .seller-cta {
+            text-align: center;
+            padding: 60px 0;
+        }
+        
+        .seller-cta h2 {
+            color: var(--primary-dark);
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        
+        .coin-box {
+            display: inline-block;
+            background-color: #FFF8E1;
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-top: 30px;
+            font-weight: 500;
+        }
+        
+        .coin-box a {
+            color: #FFA000;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .benefits-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .steps-container {
+                flex-direction: column;
+            }
+            
+            .steps-container::before {
+                display: none;
+            }
+            
+            .step {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <section class="sell-header">
+        <div class="container">
+            <h1>Sumbit With Clutter & Co</h1>
+            <p>Turn your pre-loved clothing into cash and Clutter Coins while helping reduce fashion waste. Our platform makes selling easy and rewarding.</p>
+        
+        {% if user.is_authenticated %}
+            {% if user.user_type == 'seller' %}
+                <a href="{% url 'homepage' %}" class="fill-btn-r">Seller Can't the feature</a>                
+            {% else %}
+                <a href="{% url 'declutter_page' %}" class="fill-btn-r">START DECLUTTING NOW</a>
+            {% endif %}
+        {% else %}
+                <a href="{% url 'login' %}" class="fill-btn-r">START DECLUTTING NOW</a>
+
+        {% endif %}
+
+            {% comment %} <a href="{% url 'userlogin' %}" class="fill-btn-l">LOGIN</a> {% endcomment %}
+        </div>
+    </section>
+    
+    <div class="container">
+        <!-- Benefits Section -->
+        <section class="benefits-section">
+            <div class="benefit-card">
+                <div class="benefit-icon">💰</div>
+                <h3>Earn More</h3>
+                <p>Get 20% higher payouts compared to other platforms when you redeem as Clutter Coins.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">🚚</div>
+                <h3>Easy Shipping</h3>
+                <p>We provide prepaid shipping labels and handle all customer service for your sales.</p>
+            </div>
+            
+            <div class="benefit-card">
+                <div class="benefit-icon">🌱</div>
+                <h3>Sustainable Impact</h3>
+                <p>Join our mission to reduce clothing waste and promote circular fashion.</p>
+            </div>
+        </section>
+        
+        <!-- How It Works Section -->
+        <section class="how-it-works">
+            <h2 style="text-align: center; color: var(--primary-dark);">How Selling Works</h2>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>List Your Items</h3>
+                    <p>Upload photos and details of your clothing in just minutes.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>We Handle the Sale</h3>
+                    <p>Our team verifies your items and lists them in our marketplace.</p>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Paid</h3>
+                    <p>Receive payment via bank transfer or extra Clutter Coins when items sell.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seller CTA Section -->
+        <section class="seller-cta">
+            <h2>Ready to Declutter Your Wardrobe?</h2>
+            <p>Join hundreds of sellers making money from their pre-loved clothing.</p>
+    
+        {% if user.is_authenticated %}
+            {% if user.user_type == 'seller' %}
+                <p style="color:red; font-size:14px;">* You’ve already created a Seller Account <br>Create another Account to Declutting</p>
+                <a href="{% url 'homepage' %}" class="fill-btn-r">Seller Can't the feature*</a>                
+            {% else %}
+                <a href="{% url 'declutter_page' %}" class="fill-btn-r">START DECLUTTING NOW</a>
+            {% endif %}
+        {% else %}
+                <a href="{% url 'login' %}" class="fill-btn-r">START DECLUTTING NOW</a>
+
+        {% endif %}
+            <a href="#" class="fill-btn-l">LEARN MORE</a>
+           
+        </section>
+    </div>
+</body>
+</html>
+        

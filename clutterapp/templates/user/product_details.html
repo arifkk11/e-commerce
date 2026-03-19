@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | Clutter & Co</title>
+
+
+    <style>
+        :root {
+            --primary-color: #7CC9A4;
+            --primary-dark: #2E7D5F;
+            --primary-light: #D5F9E9;
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --border-color: #e0e0e0;
+            --discount-color: #e74c3c;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Product Main Section */
+        .product-view {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+        
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        /* Product Gallery */
+        .product-gallery {
+            flex: 1;
+            min-width: 300px;
+            padding: 20px;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 400px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: zoom-in;
+        }
+        
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .thumbnail {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border 0.2s;
+        }
+        
+        .thumbnail:hover, .thumbnail.active {
+            border-color: var(--primary-color);
+        }
+        
+        /* Product Details */
+        .product-details {
+            flex: 1;
+            min-width: 300px;
+            padding: 30px;
+            border-left: 1px solid var(--border-color);
+        }
+        
+        .product-header {
+            margin-bottom: 20px;
+        }
+        
+        .product-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+        
+        .product-seller {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .product-seller a {
+            color: var(--primary-dark);
+            text-decoration: none;
+        }
+        
+        .product-seller a:hover {
+            text-decoration: underline;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stars {
+            color: #FFB800;
+            margin-right: 10px;
+        }
+        
+        .review-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .price-container {
+            margin: 20px 0;
+        }
+        
+        .current-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+        
+        .original-price {
+            font-size: 18px;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+        
+        .discount-badge {
+            display: inline-block;
+            background-color: var(--discount-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .product-description {
+            margin: 25px 0;
+            line-height: 1.7;
+        }
+        
+        /* Variant Selection */
+        .variant-option {
+            margin: 20px 0;
+        }
+        
+        .variant-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .color-options, .size-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .color-option, .size-option {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .color-option {
+            position: relative;
+            padding-left: 35px;
+        }
+        
+        .color-option::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: var(--color-value);
+        }
+        
+        .color-option.selected, .size-option.selected {
+            border-color: var(--primary-color);
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .size-option.disabled {
+            color: #ccc;
+            text-decoration: line-through;
+            cursor: not-allowed;
+        }
+        
+        /* Quantity & Add to Cart */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            background: #f5f5f5;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-right: none;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .add-to-cart, .buy-now {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .add-to-cart {
+            background-color: var(--primary-color);
+            color: white;
+            flex: 2;
+        }
+        
+        .add-to-cart:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .buy-now {
+            background-color: #333;
+            color: white;
+            flex: 1;
+        }
+        
+        .buy-now:hover {
+            background-color: #111;
+        }
+        
+        .wishlist-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+            margin-left: 15px;
+            transition: color 0.2s;
+        }
+        
+        .wishlist-btn:hover, .wishlist-btn.active {
+            color: var(--discount-color);
+        }
+        
+        /* Product Tabs */
+        .product-tabs {
+            margin-top: 50px;
+        }
+        
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab-btn {
+            padding: 12px 25px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-dark);
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            padding: 25px;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-container {
+                flex-direction: column;
+            }
+            
+            .product-details {
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+            
+            .main-image {
+                height: 300px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .add-to-cart, .buy-now {
+                width: 100%;
+            }
+        }
+        .variant-option {
+        margin-bottom: 10px;
+        }
+
+        .size-options {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        }
+
+        .size-option {
+        border: 2px solid #333;
+        border-radius: 20px;
+        padding: 6px 12px;
+        cursor: pointer;
+        text-align: center;
+        font-weight: 500;
+        }
+
+        .size-option.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        }
+        .size-option {
+        position: relative;
+        padding: 6px 12px;
+        font-weight: 500;
+        font-size: 14px;
+        text-align: center;
+        }
+
+        .size-option.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        }
+
+        .size-option span.stock-count {
+        display: block;
+        font-size: 12px;
+        color: #777;
+        }
+        .variant-btn {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin: 4px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .variant-btn:hover {
+            border-color: #666;
+        }
+
+        .variant-btn.selected {
+            background-color: #4CAF50; /* green highlight */
+            color: #fff;
+            border-color: #4CAF50;
+            font-weight: bold;
+        }
+
+        /* Overlay */
+        .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 999; 
+        top: 0; 
+        left: 0;
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0,0,0,0.5);
+        overflow-y: auto; /* allows scrolling if content is too big */
+        }
+
+        /* Modal box */
+        .modal-content {
+        background: #fff;
+        margin: 5% auto; 
+        padding: 20px;
+        width: 90%; 
+        max-width: 500px; /* won’t stretch too wide */
+        border-radius: 10px;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Close button */
+        .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        cursor: pointer;
+        font-size: 24px;
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 600px) {
+        .modal-content {
+            width: 95%; 
+            margin: 10% auto;
+            padding: 15px;
+        }
+        }
+                
+
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="product-view">
+            <div class="product-container">
+                <!-- Product Gallery -->
+                <div class="product-gallery">
+                    <img id="mainImage" src="{{ product.images.first.image.url }}" alt="{{ product.name }}" class="main-image">
+                    <div class="thumbnail-container">
+                        {% for image in product.images.all %}
+                        <img src="{{ image.image.url }}" alt="{{ product.name }} - {{ forloop.counter }}" 
+                             class="thumbnail {% if forloop.first %}active{% endif %}" 
+                             onclick="changeMainImage('{{ image.image.url }}', this)">
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Product Details -->
+                <div class="product-details">
+                    <div class="product-header">
+                        <h1 class="product-title">{{ product.name }}</h1>
+                        <div class="product-seller">
+                            Sold by<a href="{% url 'store_detail' product.seller.id %}"
+                            >{{ product.seller.store_name }}</a>
+                        </div>
+                        <div class="product-rating" style="margin-bottom: 15px;">
+                            <div class="stars" style="color:#FFB800; font-size: 1.2rem;">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %}
+                                        ★
+                                    {% elif avg_rating|floatformat:1 > forloop.counter0 %}
+                                        ★
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span class="review-count">
+                                {{ avg_rating }}/5 ({{ total_reviews }} reviews)
+                            </span>
+                        </div>
+
+                    </div>
+                    
+               <!-- Price Section -->
+                <div class="price-container">
+                    <span class="current-price">
+                        ₹{{ product.get_final_price|floatformat:2 }}
+                    </span>
+                    
+                    <span class="original-price"
+                        {% if product.get_final_price >= product.price %}style="display:none;"{% endif %}>
+                        ₹{{ product.price|floatformat:2 }}
+                    </span>
+                    
+                    <span class="discount-badge"
+                        {% if product.get_discount_percentage == 0 %}style="display:none;"{% endif %}>
+                        {{ product.get_discount_percentage }}% OFF
+                    </span>
+                </div>
+
+
+
+
+                    
+                    <!-- Color Variants -->
+                    <div class="variant-option">
+                        <span class="variant-title">Color:</span>
+                        <div class="color-options">
+                            <div class="color-option selected" data-color="{{ product.color }}" style="--color-value: {{ product.color|lower }}">
+                                {{ product.color }}
+                            </div>
+                            <!-- Additional color options could be added here -->
+                        </div>
+                    </div>
+                    
+               
+
+                    
+                    <!-- Stock Information -->
+                    <div class="stock-info" style="margin: 15px 0; color: {% if product.stock_quantity > 0 %}#388E3C{% else %}#D32F2F{% endif %}; font-weight: 500;">
+                        {% if product.stock_quantity > 0 %}
+                            ✅ In Stock ({{ product.stock_quantity }} available)
+                        {% else %}
+                            ❌ Out of Stock
+                        {% endif %}
+                    </div>
+                    <!-- Common Size Selector -->
+                   <!-- Common Size Buttons -->
+                    {% if product.variants.exists %}
+                        <label>Select Size:</label>
+                        <div class="variant-buttons">
+                            {% for variant in product.variants.all %}
+                                <button type="button"
+                                        class="variant-btn"
+                                        data-id="{{ variant.id }}"
+                                        data-stock="{{ variant.stock }}"
+                                        {% if variant.stock == 0 %} disabled {% endif %}>
+                                    {{ variant.size }} 
+                                    {% if variant.stock > 0 %}
+                                        ( {{ variant.stock }} )
+                                    {% else %}
+                                        (Out of stock)
+                                    {% endif %}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+
+
+                    <!-- Common Quantity Selector -->
+                    {% comment %} <div class="quantity-selector">
+                        <span class="variant-title" style="margin-right: 15px;">Quantity:</span>
+                        <button type="button" class="quantity-btn minus">-</button>
+                        <input type="number" id="global_quantity" value="1" min="1" max="{{ product.stock_quantity }}">
+                        <button type="button" class="quantity-btn plus">+</button>
+                    </div> {% endcomment %}
+
+                   
+                    <!-- Action Buttons -->
+                    {% if user.is_authenticated %}
+                        {% if user.user_type == 'seller' %}
+                            <h2>Seller Dashboard</h2>
+                            <p>Manage your products and orders from your <a href="{% url 'seller_dashbord' %}">Seller Dashboard</a>.</p>
+                        {% else %}
+                            <div class="action-buttons">
+                                <!-- Add to Cart Form -->
+                                <form action="{% url 'add_to_cart' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="variant_id" id="cart_variant">
+                                    <input type="hidden" name="quantity" id="cart_quantity">
+                                    <button type="submit" class="add-to-cart" {% if product.stock_quantity == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}>Add to Cart</button>
+                                </form>
+
+                                <!-- Buy Now Form -->
+                                <form action="{% url 'buy_now' product.id %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="variant_id" id="buy_variant">
+                                    <input type="hidden" name="quantity" id="buy_quantity">
+                                    <button type="submit" class="buy-now" {% if product.stock_quantity == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}>Buy Now</button>
+                                </form>
+
+                                <a href="{% url 'add_to_wishlist' product.id %}" class="wishlist-btn" style="text-decoration:none;">♥ Add to Wishlist</a>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="action-buttons">
+                            <button class="add-to-cart" onclick="redirectToLogin()" {% if product.stock_quantity == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}>Add to Cart</button>
+                            <button class="buy-now" onclick="redirectToLogin()" {% if product.stock_quantity == 0 %}disabled style="opacity:0.6;cursor:not-allowed;"{% endif %}>Buy Now</button>
+                            <a href="javascript:void(0);" class="wishlist-btn" onclick="redirectToLogin()" style="text-decoration:none;">♥ Add to Wishlist</a>
+                        </div>
+                    {% endif %}
+
+                    
+                    <!-- Product Description -->
+                    <div class="product-description">
+                        <h3>Description</h3>
+                        <p>{{ product.description }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Tabs -->
+            <div class="product-tabs">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="details">Product Details</button>
+                    <button class="tab-btn" data-tab="specs">Sold By</button>
+                    <button class="tab-btn" data-tab="reviews">Reviews</button>
+                    <button class="tab-btn" data-tab="shipping">Shipping & Returns</button>
+                </div>
+                
+                <div class="tab-content active" id="details">
+                    <h4>About this item</h4>
+                    <p>{{ product.description }}</p>
+                    <ul>
+                        <li>Category: {{ product.get_category_display }}</li>
+                        <li>Subcategory: {{ product.get_subcategory_display }}</li>
+                        <li>Color: {{ product.color }}</li>
+                        <li>Available sizes: {% for variant in product.variants.all %}{{ variant.size }}{% if not forloop.last %}, {% endif %}{% endfor %}</li>
+                        <li>Listed on: {{ product.created_at|date:"F j, Y" }}</li>
+                    </ul>
+                </div>
+                
+               <div class="tab-content" id="specs">
+                    <h4>Seller address:</h4>
+                    <p>
+                        {{product.seller.store_name}}<br>
+                        {{ product.seller.user.email}}<br>
+                        {{ product.seller.phone }}<br>
+                        {{ product.seller.address.city }}<br>
+                        {{ product.seller.address.state }},
+                        {{ product.seller.address.country }}<br>
+                        {{ product.seller.address.post_office }},-
+                        {{ product.seller.address.pin }}
+                    </p>
+                </div>
+
+                
+                <div class="tab-content" id="reviews">
+                    <h4>Customer Reviews</h4>
+                    {% if reviews %}
+                        {% for review in reviews %}
+                            <div class="review-item" style="border-bottom: 1px solid #eee; padding: 10px 0; {% if forloop.counter > 2 %}display:none;{% endif %}">
+                                <strong>{{ review.user.name }}</strong> - 
+                                <span class="stars" style="color: #FFB800;">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter0 < review.rating %}
+                                            ★
+                                        {% else %}
+                                            ☆
+                                        {% endif %}
+                                    {% endfor %}
+                                </span>
+                                <p>{{ review.comment }}</p>
+                                <small style="color: #777;">Reviewed on {{ review.created_at|date:"F j, Y" }}</small>
+                            </div>
+                        {% endfor %}
+
+                        {% if reviews|length > 2 %}
+                            <button id="showMoreBtn" onclick="showMoreReviews()" style="margin-top:10px; background-color: none; color: blue; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer;">
+                                More...
+                            </button>
+                        {% endif %}
+                    {% else %}
+                        <p>No reviews yet. Be the first to review this product!</p>
+                    {% endif %}
+                    <br>
+
+                    {% if has_purchased %}
+                        <button onclick="document.getElementById('reviewModal').style.display='block'" style="margin-top:10px; background-color: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;">
+                            Write a Review
+                        </button>
+                        <p style="color:#777;">
+                            Quality is not guaranteed. Send us your 
+                            <button  
+                                style="background:none; border:none; padding:0; margin:0; color:blue; text-decoration:underline; cursor:pointer;"  
+                               onclick="document.getElementById('feedbackModal').style.display='block'"   >
+                                Leave Feedback
+                            </button>
+
+
+                        </p>
+                    {% else %}
+                        <p style="color:#777;">Only customers who purchased this product can write a review.</p>
+                    {% endif %}
+
+                    <!-- Review submission form could go here -->
+                    <div id="reviewModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="document.getElementById('reviewModal').style.display='none'">&times;</span>
+                            <h2>Write a Review</h2>
+                            <form id="reviewForm" method="post" action="{% url 'submit_review' product.id %}">
+                                {% csrf_token %}
+                                <label for="rating">Rating:</label>
+                                <select id="rating" name="rating" required>
+                                    <option value="">Select</option>
+                                    <option value="5">★★★★★ - Excellent</option>
+                                    <option value="4">★★★★ - Very Good</option>
+                                    <option value="3">★★★ - Good</option>
+                                    <option value="2">★★ - Fair</option>
+                                    <option value="1">★ - Poor</option>
+                                </select>
+                                <br><br>
+                                <label for="comment">Comment:</label><br>
+                                <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+                                <br><br>
+                                <button type="submit">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- Feedback submission form could go here -->
+                    <div id="feedbackModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="document.getElementById('feedbackModal').style.display='none'">&times;</span>
+                            <h2>Write a Feedback</h2>
+                            <form id="feedbackModal" method="post"  action="{% url 'submit_feedback' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                 <!-- Message -->
+                                
+                                <label for="message" class="form-label">Your Feedback</label>
+                                <textarea class="form-control" id="message" name="message" rows="4" cols="50" required></textarea>
+                                
+
+                                <!-- Image Upload -->
+                            
+                                <label for="image" class="form-label">Upload Image </label>
+                                <input class="form-control" type="file" id="image" name="image" accept="image/*">
+                                
+                                <!-- Hidden Product ID -->
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <br><br>
+
+                                <button type="submit">Submit FeedBack</button>
+                            </form>
+                        </div>
+                    </div>
+                    
+
+
+
+                    
+
+                </div>
+                
+                <div class="tab-content" id="shipping">
+                    <h4>Shipping Information</h4>
+                    <p>Standard shipping: 3-5 business days</p>
+                    <p>Free returns within 30 days</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% comment %} <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const variantButtons = document.querySelectorAll(".variant-btn");
+        const buyVariantInput = document.getElementById("buy_variant");
+        const buyQuantityInput = document.getElementById("buy_quantity");
+        const globalQuantityInput = document.getElementById("global_quantity");
+
+        // Select variant
+        variantButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                // set hidden variant input
+                buyVariantInput.value = this.dataset.id;
+
+                // highlight selected button
+                variantButtons.forEach(btn => btn.classList.remove("selected"));
+                this.classList.add("selected");
+
+                // update max quantity for this variant
+                const stock = parseInt(this.dataset.stock);
+                globalQuantityInput.max = stock;
+                if (parseInt(globalQuantityInput.value) > stock) {
+                    globalQuantityInput.value = stock;
+                }
+            });
+        });
+
+        // Quantity minus
+        document.querySelector(".quantity-btn.minus").addEventListener("click", function() {
+            let current = parseInt(globalQuantityInput.value);
+            if (current > 1) {
+                globalQuantityInput.value = current - 1;
+            }
+        });
+
+        // Quantity plus
+        document.querySelector(".quantity-btn.plus").addEventListener("click", function() {
+            let current = parseInt(globalQuantityInput.value);
+            let max = parseInt(globalQuantityInput.max);
+            if (current < max) {
+                globalQuantityInput.value = current + 1;
+            }
+        });
+
+        // Before submitting form → set hidden quantity
+        document.querySelector("form[action*='buy_now']").addEventListener("submit", function() {
+            buyQuantityInput.value = globalQuantityInput.value;
+        });
+    });
+
+    variantButtons.forEach(button => {
+        button.addEventListener("click", function() {
+            buyVariantInput.value = this.dataset.id;
+
+            // remove previous highlight
+            variantButtons.forEach(btn => btn.classList.remove("selected"));
+            // highlight this one
+            this.classList.add("selected");
+
+            const stock = parseInt(this.dataset.stock);
+            globalQuantityInput.max = stock;
+            if (parseInt(globalQuantityInput.value) > stock) {
+                globalQuantityInput.value = stock;
+            }
+        });
+    });
+
+    
+
+</script> {% endcomment %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const variantButtons = document.querySelectorAll(".variant-btn");
+        const buyForm = document.querySelector("form[action*='buy_now']");
+        const cartForm = document.querySelector("form[action*='add_to_cart']");
+
+        const buyVariantInput = document.getElementById("buy_variant");
+        const cartVariantInput = document.getElementById("cart_variant");
+        const buyQuantityInput = document.getElementById("buy_quantity");
+        const cartQuantityInput = document.getElementById("cart_quantity");
+        const globalQuantityInput = document.getElementById("global_quantity");
+
+        // ✅ Select variant
+        variantButtons.forEach(button => {
+            button.addEventListener("click", function() {
+                const variantId = this.dataset.id;
+                const stock = parseInt(this.dataset.stock);
+
+                // set hidden inputs for both forms
+                if (buyVariantInput) buyVariantInput.value = variantId;
+                if (cartVariantInput) cartVariantInput.value = variantId;
+
+                // highlight selected button
+                variantButtons.forEach(btn => btn.classList.remove("selected"));
+                this.classList.add("selected");
+
+                // update max quantity
+                if (globalQuantityInput) {
+                    globalQuantityInput.max = stock;
+                    if (parseInt(globalQuantityInput.value) > stock) {
+                        globalQuantityInput.value = stock;
+                    }
+                }
+            });
+        });
+
+        // ✅ Auto-select first available variant and set hidden inputs
+        if (variantButtons.length > 0) {
+            const firstAvailable = Array.from(variantButtons).find(btn => !btn.disabled);
+            if (firstAvailable) {
+                // highlight and set hidden inputs
+                variantButtons.forEach(btn => btn.classList.remove("selected"));
+                firstAvailable.classList.add("selected");
+                const variantId = firstAvailable.dataset.id;
+                if (buyVariantInput) buyVariantInput.value = variantId;
+                if (cartVariantInput) cartVariantInput.value = variantId;
+                // update max quantity
+                const stock = parseInt(firstAvailable.dataset.stock);
+                if (globalQuantityInput) {
+                    globalQuantityInput.max = stock;
+                    if (parseInt(globalQuantityInput.value) > stock) {
+                        globalQuantityInput.value = stock;
+                    }
+                }
+            }
+        }
+
+        // ✅ Quantity controls
+        if (document.querySelector(".quantity-btn.minus")) {
+            document.querySelector(".quantity-btn.minus").addEventListener("click", function() {
+                let current = parseInt(globalQuantityInput.value);
+                if (current > 1) globalQuantityInput.value = current - 1;
+            });
+        }
+
+        if (document.querySelector(".quantity-btn.plus")) {
+            document.querySelector(".quantity-btn.plus").addEventListener("click", function() {
+                let current = parseInt(globalQuantityInput.value);
+                let max = parseInt(globalQuantityInput.max);
+                if (current < max) globalQuantityInput.value = current + 1;
+            });
+        }
+
+        // ✅ Before submitting forms → set hidden quantity
+        if (buyForm) {
+            buyForm.addEventListener("submit", function(e) {
+                if (variantButtons.length > 0 && !buyVariantInput.value) {
+                    e.preventDefault();
+                    alert("⚠️ Please select a variant before buying!");
+                    return;
+                }
+                buyQuantityInput.value = globalQuantityInput.value;
+            });
+        }
+
+        if (cartForm) {
+            cartForm.addEventListener("submit", function(e) {
+                if (variantButtons.length > 0 && !cartVariantInput.value) {
+                    e.preventDefault();
+                    alert("⚠️ Please select a variant before adding to cart!");
+                    return;
+                }
+                cartQuantityInput.value = globalQuantityInput.value;
+            });
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        const tabButtons = document.querySelectorAll(".tab-btn");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener("click", function() {
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(b => b.classList.remove("active"));
+                tabContents.forEach(c => c.classList.remove("active"));
+
+                // Add active class to clicked button and corresponding content
+                btn.classList.add("active");
+                const tabId = btn.getAttribute("data-tab");
+                document.getElementById(tabId).classList.add("active");
+            });
+        });
+    });
+    function changeMainImage(url, thumb) {
+        document.getElementById("mainImage").src = url;
+        document.querySelectorAll(".thumbnail").forEach(t => t.classList.remove("active"));
+        thumb.classList.add("active");
+    }
+    modal = document.getElementById('reviewModal');
+
+
+    function showMoreReviews() {
+        document.querySelectorAll(".review-item").forEach((el) => {
+            el.style.display = "block";
+        });
+        document.getElementById("showMoreBtn").style.display = "none"; // hide button
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize modal
+        var feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'));
+
+        // Open modal when button is clicked
+        document.getElementById("openFeedbackBtn").addEventListener("click", function () {
+            feedbackModal.show();
+        });
+    });
+
+</script>
+
+
+</body>
+</html>

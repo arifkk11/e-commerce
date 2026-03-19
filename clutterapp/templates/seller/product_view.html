@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product View - Seller Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #f8f9fa;
+            --danger-color: #ff4a4a;
+            --warning-color: #ffc107;
+            --success-color: #28a745;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-header h2 i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .user-info h4 {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .user-info p {
+            margin: 3px 0 0;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .nav-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-btn {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .user-dropdown img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        /* Product View Styles */
+        .product-view {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 30px;
+        }
+        
+        .product-title {
+            font-size: 1.8rem;
+            margin: 0;
+            color: var(--dark-color);
+        }
+        
+        .product-meta {
+            color: #666;
+            margin: 10px 0 20px;
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .discount-price {
+            color: var(--danger-color);
+            text-decoration: line-through;
+            margin-right: 10px;
+        }
+        
+        .current-price {
+            color: var(--success-color);
+        }
+        
+        .product-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 30px 0;
+        }
+        
+        .product-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .main-image {
+            grid-column: span 3;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+        }
+        
+        .main-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .thumbnail {
+            border-radius: 5px;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .thumbnail:hover {
+            opacity: 0.8;
+        }
+        
+        .thumbnail img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .product-info {
+            padding: 0 20px;
+        }
+        
+        .info-section {
+            margin-bottom: 25px;
+        }
+        
+        .info-section h3 {
+            font-size: 1.2rem;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .info-value {
+            color: #333;
+        }
+        
+        .variants-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .variants-table th {
+            text-align: left;
+            padding: 10px;
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .variants-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background-color: #3a5ae8;
+        }
+        
+        .back-btn i {
+            margin-right: 8px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .product-details {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .product-images {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-image {
+                grid-column: span 2;
+                height: 300px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .product-images {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-image {
+                grid-column: span 1;
+                height: 250px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                margin-top: 15px;
+            }
+        }
+        .btn-danger {
+            background-color: var(--danger-color);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .btn-danger:hover {
+            background-color: #e03535;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-store"></i> Seller Portal</h2>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="{{ user.profile_image }}" alt="Profile Picture" style="width:48px; height:48px; border-radius:50%;">
+                    </div>
+                    <div class="user-info">
+                        <h4>{{ user.username }}</h4>
+                        <p>Seller</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a href="{% url 'seller_dashbord' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </div>
+                <div class="nav-item active">
+                    <a href="{% url 'seller_products' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'seller_orders' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'seller_report' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-chart-line"></i> Reports
+                    </a>
+                </div>
+        
+                <div class="nav-item">
+                    <a href="{% url 'seller_inventory' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-warehouse"></i> Inventory
+                    </a>
+                </div>
+
+                <a href="{% url 'custom_logout' %}" class="nav-item" style="text-decoration: none; color: red;">
+                <div class="nav-item" style="color: red;">
+                    <i class="fas fa-sign-out-alt"></i> Logout          
+                </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Product Details</h1>
+                <div class="header-actions">
+                    <div class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <div class="notification-badge">3</div>
+                    </div>
+                    <div class="user-dropdown">
+                        <img src="{{ user.profile_image }}" alt="Profile Picture" style="width:48px; height:48px; border-radius:50%;">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="product-view">
+                <div class="product-header">
+                    <div>
+                        <h2 class="product-title">{{ product.name }}</h2>
+                        <div class="product-meta">
+                            <span>Category: {{ product.category }} / {{ product.subcategory }}/{{ product.subsubcategory}}</span>
+                        </div>
+                    </div>
+                    <div class="product-price">
+                        {% if product.discount_price %}
+                            <span class="discount-price">₹{{ product.price }}</span>
+                            <span class="current-price">₹{{ product.discount_price }}</span>
+                        {% else %}
+                            <span class="current-price">₹{{ product.price }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="product-details">
+                    <div class="product-images">
+                        <div class="main-image">
+                            {% if product.images.first %}
+                                <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                            {% else %}
+                                <span>No image available</span>
+                            {% endif %}
+                        </div>
+                        {% for image in product.images.all %}
+                            <div class="thumbnail">
+                                <img src="{{ image.image.url }}" alt="{{ product.name }}">
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="product-info">
+                        <div class="info-section">
+                            <h3>Product Information</h3>
+                            <div class="info-row">
+                                <div class="info-label">Description:</div>
+                                <div class="info-value">{{ product.description }}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Color:</div>
+                                <div class="info-value">{{ product.color }}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Total Stock:</div>
+                                <div class="info-value">{{ product.stock_quantity }}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h3>Size Variants</h3>
+                            <table class="variants-table">
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Stock</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for variant in variants %}
+                                    <tr>
+                                        <td>{{ variant.size }}</td>
+                                        <td>{{ variant.stock }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                            <a href="{% url 'seller_products' %}" class="back-btn">
+                                <i class="fas fa-arrow-left"></i> Back to Products
+                            </a>
+                            {% comment %} <a href="{% url 'seller_inventory' %}" class="back-btn">
+                                <i class="fas fa-arrow-left"></i> Back to Inventory
+                            </a>
+             {% endcomment %}
+                    
+                     <button id="deleteProductBtn" class="btn btn-danger" style="display: inline-flex; align-items: center;">
+                        <i class="fas fa-trash-alt mr-2"></i> Delete Product
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add this modal at the bottom of your body (before the scripts) -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this product? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form id="deleteProductForm" method="POST" action="{% url 'delete_product' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Delete Permanently</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Image gallery functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainImage = document.querySelector('.main-image img');
+            const thumbnails = document.querySelectorAll('.thumbnail img');
+            
+            if (thumbnails.length > 0) {
+                thumbnails.forEach(thumbnail => {
+                    thumbnail.addEventListener('click', function() {
+                        mainImage.src = this.src;
+                    });
+                });
+            }
+
+            // Delete product confirmation
+            const deleteBtn = document.getElementById('deleteProductBtn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
+                    deleteModal.show();
+                });
+            }
+        })
+    </script>
+</body>
+</html>

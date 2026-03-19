@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fbfa;
+            color: #2d3748;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .order-detail {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .order-header {
+            background-color: #7CC9A4;
+            color: white;
+            padding: 25px 30px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .order-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+        }
+
+        .meta-item i {
+            font-size: 16px;
+        }
+
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .status-processing {
+            background-color: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-shipped {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .status-delivered {
+            background-color: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-cancelled {
+            background-color: #FEE2E2;
+            color: #B91C1C;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        h3 {
+            font-size: 20px;
+            color: #2d3748;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #D5F9E9;
+            display: flex;
+            align-items: center;
+        }
+
+        h3 i {
+            margin-right: 10px;
+            color: #7CC9A4;
+        }
+
+        .shipping-address {
+            background-color: #F0FDF9;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #7CC9A4;
+        }
+
+        .address-line {
+            margin-bottom: 8px;
+        }
+
+        .order-items {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .order-item {
+            display: flex;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background-color: #ffffff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .order-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 18px;
+            color: #1f2937;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .item-detail {
+            display: block;
+            margin-bottom: 5px;
+            color: #4b5563;
+        }
+
+        .item-price {
+            font-weight: 700;
+            color: #7CC9A4;
+        }
+
+        .summary {
+            background-color: #F0FDF9;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #D5F9E9;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #D5F9E9;
+        }
+
+        .total-row {
+            font-weight: 700;
+            font-size: 18px;
+            color: #1f2937;
+            border-bottom: none;
+            padding-top: 15px;
+            margin-top: 5px;
+            border-top: 2px solid #D5F9E9;
+        }
+
+        .help-section {
+            background-color: #F0FDF9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            border: 1px solid #D5F9E9;
+        }
+
+        .help-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .help-contact {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .contact-method {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4b5563;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-method:hover {
+            color: #7CC9A4;
+        }
+
+        @media (max-width: 768px) {
+            .order-detail {
+                margin: 15px auto;
+                border-radius: 12px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .order-item {
+                flex-direction: column;
+            }
+            
+            .item-image {
+                width: 100%;
+                height: 200px;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .help-contact {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="order-detail">
+        <div class="order-header">
+            <h2>Order #{{ order.id }}</h2>
+            <div class="order-meta">
+                <div class="meta-item">
+                    <i class="far fa-calendar-alt"></i>
+                    <span>Placed on {{ order.created_at|date:"F j, Y, g:i A" }}</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-tag"></i>
+                    <span class="status status-{{ order.status|lower }}">{{ order.get_status_display }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h3><i class="fas fa-truck"></i> Shipping Address</h3>
+                <div class="shipping-address">
+                    <div class="address-line">{{ order.shipping_name }}</div>
+                    <div class="address-line">{{ order.shipping_phone }}</div>
+                    <div class="address-line">{{ order.shipping_full_address }}</div>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3><i class="fas fa-box-open"></i> Items</h3>
+                <ul class="order-items">
+                    {% for item in order.items.all %}
+                    <li class="order-item">
+                        <img src="{{ item.product.get_first_image_url }}" class="item-image" alt="{{ item.product.name }}">
+                        <div class="item-info">
+                            <span class="item-name">{{ item.product.name }}</span>{{item.product.seller.phone}}
+                            <span class="item-detail">Qty: {{ item.quantity }}</span>
+                            <span class="item-detail">Unit Price: <span class="item-price">₹{{ item.price }}</span></span>
+                            <span class="item-detail">Total: <span class="item-price">₹{{ item.total_price }}</span></span>
+                        </div>
+                       
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3><i class="fas fa-receipt"></i> Summary</h3>
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span>₹{{ order.total_before_discount }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Coins Used:</span>
+                        <span>{{ order.coins_used }}</span>
+                    </div>
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <span>₹{{ order.total_after_discount }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="help-section">
+                <div class="help-title">Need help with your order?{{item.product.seller.phone}}</div>
+                <div class="help-contact">
+                    <a href="tel:4428844" class="contact-method">
+                        <i class="fas fa-phone"></i>
+                        <span>+648455554</span>
+                    </a>
+
+                    <a href="https://mail.google.com/mail/?view=cm&fs=1&to=mail.com&su=Support%20Request" class="contact-method">
+                        <i class="fas fa-envelope"></i>
+                        <span>hfash@gmail.com</span>
+                    </a>
+                  
+                    {% comment %} {% with first_item=order.items.first %}
+                        {% if first_item %}
+                            <a href="tel:{{ first_item.product.seller.phone }}" class="contact-method">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ first_item.product.seller.phone }}</span>
+                            </a>
+
+                            <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ first_item.product.seller.user.email }}&su=Support%20Request" class="contact-method">
+                                <i class="fas fa-envelope"></i>
+                                <span>{{ first_item.product.seller.user.email }}</span>
+                            </a>
+                        {% endif %}
+                    {% endwith %} {% endcomment %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple animation for order items
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderItems = document.querySelectorAll('.order-item');
+            orderItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body>
+</html>

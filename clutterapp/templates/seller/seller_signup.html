@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up to Your Account</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: #D5F9E9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #2E7D5F;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .logo p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        
+        .login-form .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #7CC9A4;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #7CC9A4;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        .login-btn:hover {
+            background-color: #6AB894;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .divider::before {
+            margin-right: 15px;
+        }
+        
+        .divider::after {
+            margin-left: 15px;
+        }
+        
+        .google-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: white;
+            color: #3c4043;
+            border: 1px solid #7CC9A4;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .google-btn:hover {
+            background-color: #D5F9E9;
+            border-color: #6AB894;
+        }
+        
+        .google-btn img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .footer-links a {
+            color: #7CC9A4;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .footer-links a:hover {
+            text-decoration: underline;
+            color: #2E7D5F;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>Join Clutter & Co</h1>
+            <p>Create your account to get started</p>
+        </div>
+
+        <form class="login-form" method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="login-btn">Sign Up</button>
+            {% if error %}
+                <p class="error-message">{{error}}</p>        
+            {% endif %}
+        </form>
+        
+        <div class="divider">or</div>
+        
+        <a href="{% url 'google_start' %}?role=seller"  style="text-decoration:none;">
+
+            <button class="google-btn">
+            <img src="https://www.google.com/favicon.ico" alt="Google logo">
+            Sign up with Google
+            </button>
+        </a>
+
+        <div class="footer-links">
+            Already have an account? <a href="{% url 'login' %}">Log in</a>
+        </div>
+    </div>
+</body>
+</html>

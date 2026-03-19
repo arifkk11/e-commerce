@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Dashboard</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #f8f9fa;
+            --danger-color: #ff4a4a;
+            --warning-color: #ffc107;
+            --success-color: #28a745;
+            --dark-color: #343a40;
+            --light-color: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            width: 250px;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-header h2 i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .user-info h4 {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .user-info p {
+            margin: 3px 0 0;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .nav-menu {
+            padding: 20px 0;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .nav-item i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+            grid-column: 2;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--dark-color);
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-btn {
+            position: relative;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .user-dropdown img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .card-title {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .sales .card-icon { background-color: var(--primary-color); }
+        .orders .card-icon { background-color: var(--success-color); }
+        .inventory .card-icon { background-color: var(--warning-color); }
+        .alerts .card-icon { background-color: var(--danger-color); }
+        
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+        
+        .card-footer {
+            font-size: 0.8rem;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+        
+        .card-footer i {
+            margin-right: 5px;
+        }
+        
+        .positive {
+            color: var(--success-color);
+        }
+        
+        .negative {
+            color: var(--danger-color);
+        }
+        
+        /* Main Sections */
+        .section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .section-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .btn i {
+            margin-right: 5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5ae8;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+        
+        .btn-outline:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* Tables */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th {
+            text-align: left;
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            font-weight: 500;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-processing {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+        
+        .status-low {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            margin: 0 5px;
+            transition: color 0.3s;
+        }
+        
+        .action-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        /* Charts */
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .user-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .user-dropdown:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .user-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 300px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 15px;
+            margin-top: 5px;
+        }
+        
+        .user-dropdown.active .user-dropdown-content {
+            display: block;
+        }
+        
+        .dropdown-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+        }
+        
+        .dropdown-header img {
+            margin-right: 15px;
+        }
+        
+        .dropdown-header h4 {
+            margin: 0 0 5px 0;
+            font-size: 1.1rem;
+        }
+        
+        .dropdown-header p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-section {
+            margin-bottom: 15px;
+        }
+        
+        .dropdown-section h5 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .profile-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .profile-detail i {
+            margin-right: 10px;
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+            margin-top: 3px;
+        }
+        
+        .profile-detail span {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .dropdown-footer {
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            margin-top: 15px;
+        }
+        
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            color: var(--danger-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 0;
+        }
+        
+        .logout-btn i {
+            margin-right: 10px;
+        }
+        
+        .logout-btn:hover {
+            color: #d32f2f;
+        }
+        
+        /* Stock Alerts Card Styles */
+        .stock-alerts-list {
+            margin: 10px 0;
+        }
+
+        .alert-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            align-items: center;
+        }
+
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 500;
+        }
+
+        .stock-amount {
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        .out-of-stock {
+            background-color: #FFEBEE;
+            color: #C62828;
+        }
+
+        .critical-stock {
+            background-color: #FFF3E0;
+            color: #E65100;
+        }
+
+        .low-stock {
+            background-color: #E3F2FD;
+            color: #1565C0;
+        }
+
+        .no-alerts {
+            padding: 20px 0;
+            text-align: center;
+            color: var(--success-color);
+        }
+
+        .no-alerts i {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .more-items {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+        .card-footer .view-all {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-footer .view-all i {
+            margin-right: 5px;
+        }
+
+        .dropdown-actions {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            color: #444;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-size: 13px;
+        }
+
+        .action-btn i {
+            margin-right: 10px;
+            color: #555;
+            width: 18px;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            background-color: #f5f5f5;
+            color: #000;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .dashboard-cards {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                grid-column: 1;
+                padding: 20px 15px;
+            }
+            
+            .menu-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            .user-dropdown-content {
+                width: 280px;
+                right: -10px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .section-actions {
+                margin-top: 15px;
+                flex-wrap: wrap;
+            }
+            
+            .table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .user-dropdown-content {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 320px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card-value {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+            
+            .user-dropdown img {
+                width: 30px;
+                height: 30px;
+            }
+            
+            .notification-btn {
+                margin-right: 15px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .sidebar {
+                width: 100%;
+            }
+            
+            .main-content {
+                padding: 15px 10px;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .notification-btn {
+                margin-bottom: 10px;
+            }
+        }
+        {% comment %} body.dark-mode {
+        background: #111;
+        color: #f0f0f0;
+        } {% endcomment %}
+
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="menu-toggle" id="menuToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <!-- Overlay for mobile menu -->
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-store"></i> Seller Portal</h2>
+                {% comment %} <button id="theme-toggle" aria-label="Toggle dark mode">
+                🌙 Dark Mode
+                </button> {% endcomment %}
+
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="{{ user.profile_image }}" alt="Profile Picture" style="width:48px;height:48px;border-radius:50%;">
+                    </div>
+                    <div class="user-info">
+                        <p>Seller</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <div class="nav-item active">
+                    <a href="{% url 'seller_dashbord' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'seller_products' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'seller_orders' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'seller_report' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-chart-line"></i> Reports
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="{% url 'seller_inventory' %}" style="text-decoration: none; color: white;">
+                        <i class="fas fa-warehouse"></i> Inventory
+                    </a>
+                </div>
+
+                <a href="{% url 'custom_logout' %}" class="nav-item" style="text-decoration: none; color: red;">
+                    <div class="nav-item" style="color: red;">
+                        <i class="fas fa-sign-out-alt"></i> Logout          
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Seller Dashboard</h1>
+                <div class="header-actions">
+                    {% comment %} <div class="notification-btn" title="Low Stock Alert">
+                        <i class="fas fa-bell"></i>
+                        {% if low_stock_count > 0 %}
+                        <div class="notification-badge">{{ low_stock_count }}</div>
+                        {% endif %}
+                    </div> {% endcomment %}
+                    
+                    <div class="user-dropdown" id="userDropdown">
+                        <img src="{{ user.profile_image }}" alt="Profile Picture" style="width:48px; height:48px; border-radius:50%;">
+                        <i class="fas fa-chevron-down"></i>
+                        
+                        <!-- Dropdown Content -->
+                        <div class="user-dropdown-content">
+                           <!-- Font Awesome (for pencil icon) -->
+
+                            <div class="dropdown-header" style="display:flex; align-items:center; gap:10px;">
+                                <form method="POST" enctype="multipart/form-data" action="{% url 'change_profile_picture' %}">
+                                    {% csrf_token %}
+                                    
+                                    <div style="position:relative; width:60px; height:60px;">
+                                        <!-- Current profile image -->
+                                        <img src="{{ user.profile_image }}" 
+                                            alt="Profile Picture" 
+                                            style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+
+                                        <!-- Hidden file input (triggered by pencil) -->
+                                        <input type="file" id="profileImageInput" name="picture" 
+                                            accept="image/*" style="display:none;" 
+                                            onchange="this.form.submit();">
+
+                                        <!-- Pencil button -->
+                                        <button type="button" 
+                                                onclick="document.getElementById('profileImageInput').click();" 
+                                                style="position:absolute; bottom:0; right:0; 
+                                                    background:#4caf50; border:none; border-radius:50%; 
+                                                    width:22px; height:22px; display:flex; align-items:center; justify-content:center; 
+                                                    cursor:pointer; color:white; font-size:12px;">
+                                            <i class="fas fa-pencil-alt"></i>
+                                        </button>
+                                    </div>
+                                </form>
+
+
+                                <div>
+                                    <p>{{ user.email }}</p>
+                                </div>
+                            </div>
+
+                            
+                            <div class="dropdown-section">
+                                <h5>Seller Profile</h5>
+                                <div class="profile-detail">
+                                    <i class="fas fa-store"></i>
+                                    <span>{{ user.seller_profile.store_name }}</span>
+                                </div>
+                                <div class="profile-detail">
+                                    <i class="fas fa-phone"></i>
+                                    <span>{{ user.seller_profile.phone }}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="dropdown-section">
+                                <h5>Business Address</h5>
+                                <div class="profile-detail">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>
+                                        {{ user.seller_profile.address.post_office }}, 
+                                        {{ user.seller_profile.address.city }}, 
+                                        {{ user.seller_profile.address.state }} - 
+                                        {{ user.seller_profile.address.pin }}
+                                    </span>
+                                </div>
+                                <div class="profile-detail">
+                                    <i class="fas fa-globe"></i>
+                                    <span>{{ user.seller_profile.address.country }}</span>
+                                </div>
+                                {% if user.seller_profile.address.extra_details %}
+                                <div class="profile-detail">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>{{ user.seller_profile.address.extra_details }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="dropdown-actions">
+                                <a href="{% url 'change_profile'  user.seller_profile.id  %}" class="action-btn">
+                                    <i class="fas fa-id-card "></i> Change Profile Details
+                                </a>
+                                <a href="{% url 'change_address'  user.seller_profile.address.id  %}" class="action-btn">
+                                    <i class="fas fa-map-marked-alt"></i> Change Address
+                                </a>
+                            </div>
+                            
+                            <div class="dropdown-footer">
+                                <a href="/" class="logout-btn">
+                                    <i class="fas fa-home"></i> View Site
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card sales">
+                    <div class="card-header">
+                        <div class="card-title">Total Sales</div>
+                        <div class="card-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">{{sales_total|floatformat:2}}</div>
+                    <div class="card-footer">
+                        <i class="fa-solid fa-circle-info"></i>Included COD and Online Payments
+                    </div>
+                </div>
+                
+                <div class="card orders">
+                    <div class="card-header">
+                        <div class="card-title">Pending Orders</div>
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">{{ pending_orders_count }}</div>
+                    <div class="card-footer">
+                        <i class="fas {{ pending_orders_arrow }}"></i> {{ pending_orders_change }}% from last month
+                    </div>
+                </div>
+
+
+                
+                <div class="card inventory">
+                    <div class="card-header">
+                        <div class="card-title">Total Products</div>
+                        <div class="card-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                    </div>
+                    <div class="card-value">{{ total_products }}</div>
+                    <div class="card-footer">
+                        {% if new_products_count > 0 %}
+                            <i class="fas fa-arrow-up positive"></i> {{ new_products_count }} new this week
+                        {% else %}
+                            <i class="fas fa-circle"></i> No new products this week
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="card alerts">
+                    <div class="card-header">
+                        <div class="card-title">Stock Alerts</div>
+                        <div class="card-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    
+                    {% if low_stock_count > 0 %}
+                        <!-- Detailed low stock list -->
+                        <div class="stock-alerts-list">
+                            {% for product in low_stock_products|slice:":3" %}
+                            <div class="alert-item">
+                                <span class="product-name">{{ product.name|truncatechars:20 }}</span>
+                                <span class="stock-amount {% if product.stock_quantity == 0 %}out-of-stock{% elif product.stock_quantity <= 2 %}critical-stock{% else %}low-stock{% endif %}">
+                                    {{ product.stock_quantity }} left
+                                </span>
+                            </div>
+                            {% endfor %}
+                            
+                            {% if low_stock_count > 3 %}
+                            <div class="more-items">
+                                +{{ low_stock_count|add:"-3" }} more items need attention
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="no-alerts">
+                            <i class="fas fa-check-circle"></i>
+                            All products have sufficient stock
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-footer">
+                        <a href="#inventory-section" class="view-all">
+                            {% if low_stock_count > 0 %}
+                            <a href="{% url 'seller_inventory' %}" class="btn btn-outline" style="text-decoration: none;">
+                                <i class="fas fa-warehouse"></i> Manage inventory
+                            </a>                    
+                            {% else %}
+                            <i class="fas fa-boxes"></i> <a href="{% url 'seller_products' %}" style="text-decoration: none; color: blue;"> View all products</a>
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    // Toggle mobile menu
+    const menuToggle = document.getElementById('menuToggle');
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    
+    menuToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
+    
+    overlay.addEventListener('click', function() {
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+    
+    // User dropdown functionality
+    document.getElementById('userDropdown').addEventListener('click', function(e) {
+        // Prevent closing when clicking inside dropdown
+        if (e.target.closest('.user-dropdown-content')) return;
+        
+        this.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-dropdown')) {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.remove('active');
+        }
+    });
+    
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.classList.remove('active');
+        }
+    });
+
+    // Dark mode toggle
+    {% comment %} const btn = document.getElementById('theme-toggle');
+    const body = document.body;
+
+    // Apply saved preference on page load
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark-mode');
+        btn.textContent = '☀️ Light Mode';
+    }
+
+    btn.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+
+        // Update button text/icon
+        const dark = body.classList.contains('dark-mode');
+        btn.textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
+
+        // Save preference
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }); {% endcomment %}
+</script>
+</html>
