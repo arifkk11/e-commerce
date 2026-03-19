@@ -30,9 +30,7 @@ SECRET_KEY = 'django-insecure-63june_atu73wk2dyzuq^p1_l(*(@cisa(go5b62b*2)39+&!_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    'web-production-27120.up.railway.app'
-]
+ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
@@ -208,3 +206,7 @@ LOGIN_REDIRECT_URL = '/'         # fallback (only used if no ?next=)
 RAZORPAY_KEY_ID = "rzp_test_RIDo3W4aRVxA5I"
 RAZORPAY_KEY_SECRET = "4SgS8yddrRIi8WSincZJmnHa"
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://web-production-27120.up.railway.app'
+]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
