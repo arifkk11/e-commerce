@@ -30,8 +30,9 @@ SECRET_KEY = 'django-insecure-63june_atu73wk2dyzuq^p1_l(*(@cisa(go5b62b*2)39+&!_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-
+ALLOWED_HOSTS = [
+    'web-production-27120.up.railway.app'
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -198,7 +199,6 @@ EMAIL_HOST_PASSWORD = 'ldtj swwg hnwh aang'
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 BASE_URL = 'https://yourdomain.com'  # For reset links
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']  # set correctly
 
 
 LOGIN_URL = '/accounts/login/'   # or your custom login page
